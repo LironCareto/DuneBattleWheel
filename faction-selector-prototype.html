@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Dune — Setup prototype</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Balthazar&family=Fira+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --blue: #263f5d;
+      --blue-light: #3c5d8d;
+      --sand: #d4bd7a;
+      --sand-light: #f0e3b8;
+      --paper: #e9e3d0;
+      --ink: #111;
+    }
+
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+
+    body {
+      margin: 0;
+      background: #fff;
+      color: var(--ink);
+      font-family: "Fira Sans", sans-serif;
+    }
+
+    .prototype {
+      width: 100%;
+      max-width: 31rem;
+      min-height: 100vh;
+      margin: 0 auto;
+      overflow-x: hidden;
+      background: var(--paper);
+    }
+
+    .app-header {
+      position: relative;
+      background: var(--blue);
+    }
+
+    .title {
+      display: grid;
+      place-items: center;
+      gap: .15rem;
+      margin: 0;
+      padding: .8rem .75rem .65rem;
+      color: #fff;
+      font-family: "Balthazar", serif;
+      font-size: 1rem;
+      font-variant: small-caps;
+      letter-spacing: .1em;
+      text-shadow: 1px 1px #172a40;
+    }
+
+    .title img {
+      width: auto;
+      height: 2.65rem;
+    }
+
+    .setup-button {
+      position: absolute;
+      top: .7rem;
+      right: .65rem;
+      min-height: 2.25rem;
+      padding: .35rem .65rem;
+      border: 1px solid rgb(255 255 255 / 65%);
+      border-radius: .25rem;
+      background: rgb(255 255 255 / 10%);
+      color: #fff;
+      cursor: pointer;
+      font-size: .72rem;
+      font-weight: 600;
+    }
+
+    .section-title {
+      position: relative;
+      margin: 0;
+      padding: .4rem 3rem;
+      background: var(--blue-light);
+      color: #fff;
+      font-family: "Balthazar", serif;
+      font-size: 1rem;
+      font-variant: small-caps;
+      letter-spacing: .08em;
+      text-align: center;
+      text-shadow: 1px 1px #1d3455;
+    }
+
+    .section-title::before,
+    .section-title::after {
+      position: absolute;
+      top: 50%;
+      width: .45rem;
+      height: .45rem;
+      border-radius: 50%;
+      background: var(--sand);
+      content: "";
+      transform: translateY(-50%);
+    }
+
+    .section-title::before { left: 1.1rem; }
+    .section-title::after { right: 1.1rem; }
+
+    .current-game {
+      padding: 1.1rem .8rem 1.5rem;
+      text-align: center;
+    }
+
+    .current-game h2 {
+      margin: .2rem 0 .35rem;
+      font-family: "Balthazar", serif;
+      font-variant: small-caps;
+      letter-spacing: .06em;
+    }
+
+    .current-game > p {
+      margin: 0 0 1rem;
+      color: #625e53;
+      font-size: .78rem;
+    }
+
+    .current-factions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: .6rem;
+    }
+
+    .current-factions img {
+      width: 3.8rem;
+      height: 3.8rem;
+      object-fit: contain;
+    }
+
+    .content {
+      padding: 1rem .8rem 1.5rem;
+    }
+
+    .instructions {
+      margin: 0 0 1rem;
+      padding: .65rem .75rem;
+      border-left: 3px solid var(--blue-light);
+      background: var(--sand-light);
+      font-family: "Balthazar", serif;
+      line-height: 1.3;
+    }
+
+    .faction-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: .8rem .7rem;
+    }
+
+    .faction {
+      position: relative;
+      appearance: none;
+      display: grid;
+      grid-template-rows: 5.25rem 1.7rem;
+      justify-items: center;
+      align-items: center;
+      justify-self: center;
+      width: 100%;
+      max-width: 7rem;
+      padding: .65rem .35rem .45rem;
+      border: 2px solid transparent;
+      border-radius: .55rem;
+      background: transparent;
+      color: #625e53;
+      cursor: pointer;
+      font: inherit;
+      font-size: .66rem;
+      font-weight: 600;
+      letter-spacing: .025em;
+      text-transform: uppercase;
+    }
+
+    .faction-logo-slot {
+      display: grid;
+      place-items: center;
+      width: 5.25rem;
+      height: 5.25rem;
+    }
+
+    .faction-logo-slot img {
+      display: block;
+      width: 5.25rem;
+      height: 5.25rem;
+      border-radius: 50%;
+      object-fit: contain;
+      filter: grayscale(1) saturate(0);
+      opacity: .34;
+      transition: filter 150ms ease, opacity 150ms ease;
+    }
+
+    .faction-name {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 1.7rem;
+      margin: 0;
+      padding: 0;
+      line-height: 1.05;
+      text-align: center;
+    }
+
+    .faction[data-active="true"] {
+      color: var(--blue);
+    }
+
+    .faction[data-active="true"] img {
+      filter: none;
+      opacity: 1;
+    }
+
+    .faction[data-you="true"] {
+      border-color: var(--blue);
+      background: rgb(240 227 184 / 60%);
+      color: var(--ink);
+      box-shadow: inset 0 0 0 2px var(--sand);
+    }
+
+    .faction[data-you="true"]::after {
+      position: absolute;
+      top: -.45rem;
+      right: -.25rem;
+      padding: .18rem .42rem;
+      border: 2px solid var(--paper);
+      border-radius: 999px;
+      background: var(--blue);
+      color: #fff;
+      content: "YOU";
+      font-size: .58rem;
+      letter-spacing: .08em;
+    }
+
+    .faction:focus-visible,
+    .action:focus-visible,
+    .setup-button:focus-visible {
+      outline: 3px solid var(--blue-light);
+      outline-offset: 2px;
+    }
+
+    .limit-notice {
+      min-height: 2.15rem;
+      margin: .75rem 0 0;
+      padding: .5rem .65rem;
+      border-left: 3px solid transparent;
+      color: #625e53;
+      font-size: .75rem;
+    }
+
+    .limit-notice[data-warning="true"] {
+      border-left-color: #946600;
+      background: #fff3cd;
+      color: #664d03;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: center;
+      margin-top: .3rem;
+    }
+
+    .action {
+      padding: .55rem .8rem;
+      border: 1px solid #b7b0a1;
+      border-radius: .25rem;
+      background: #f5f4f0;
+      color: #333;
+      cursor: pointer;
+      font: inherit;
+      font-size: .78rem;
+    }
+
+    .action--primary {
+      border-color: var(--blue);
+      background: var(--blue);
+      color: #fff;
+    }
+
+    .summary {
+      margin: .8rem 0 0;
+      color: #58544b;
+      font-size: .72rem;
+      text-align: center;
+    }
+
+    .setup-actions {
+      position: sticky;
+      bottom: 0;
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: .55rem;
+      margin: 1rem -.8rem -1.5rem;
+      padding: .75rem .8rem calc(.75rem + env(safe-area-inset-bottom));
+      border-top: 1px solid #c7bea7;
+      background: rgb(233 227 208 / 96%);
+    }
+
+    .setup-actions .action {
+      min-height: 2.65rem;
+    }
+  </style>
+</head>
+<body>
+  <main class="prototype">
+    <header class="app-header">
+      <h1 class="title">
+        <img src="img/art-title.png" alt="Dune">
+        <span>Battle Wheel</span>
+      </h1>
+      <button id="openSetup" class="setup-button" type="button">Setup</button>
+    </header>
+
+    <section id="gameScreen" class="current-game">
+      <h2>Current game</h2>
+      <p id="gameSummary"></p>
+      <div id="currentFactions" class="current-factions"></div>
+    </section>
+
+    <section id="setupScreen" hidden>
+      <h2 class="section-title">Game setup</h2>
+      <div class="content">
+        <p id="instructions" class="instructions">Select up to six factions taking part in this game.</p>
+        <div id="factionGrid" class="faction-grid"></div>
+        <p id="limitNotice" class="limit-notice" role="status" aria-live="polite"></p>
+        <div class="actions">
+          <button id="changeFaction" class="action action--primary" type="button">Change your faction</button>
+        </div>
+        <p id="summary" class="summary" aria-live="polite"></p>
+        <div class="setup-actions">
+          <button id="cancelSetup" class="action" type="button">Cancel</button>
+          <button id="saveSetup" class="action action--primary" type="button">Done</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const factions = [
+      ["atreides", "Atreides", "AT-logo.png"],
+      ["bene", "Bene Gesserit", "BG-logo.png"],
+      ["choam", "CHOAM", "CH-logo.png"],
+      ["ecaz", "Ecaz", "EZ-logo.png"],
+      ["emperor", "Emperor", "EM-logo.png"],
+      ["fremen", "Fremen", "FR-logo.png"],
+      ["harkonnen", "Harkonnen", "HK-logo.png"],
+      ["ixians", "Ixians", "IX-logo.png"],
+      ["moritani", "Moritani", "MO-logo.png"],
+      ["richese", "Richese", "RI-logo.png"],
+      ["guild", "Spacing Guild", "SG-logo.png"],
+      ["tleilaxu", "Tleilaxu", "TX-logo.png"]
+    ];
+
+    const openButton = document.querySelector("#openSetup");
+    const grid = document.querySelector("#factionGrid");
+    const instructions = document.querySelector("#instructions");
+    const summary = document.querySelector("#summary");
+    const notice = document.querySelector("#limitNotice");
+    const changeButton = document.querySelector("#changeFaction");
+    const setupScreen = document.querySelector("#setupScreen");
+    const gameScreen = document.querySelector("#gameScreen");
+    const currentFactions = document.querySelector("#currentFactions");
+    const gameSummary = document.querySelector("#gameSummary");
+
+    let savedActive = new Set(["atreides", "harkonnen", "fremen"]);
+    let savedYours = "atreides";
+    let active = new Set(savedActive);
+    let yours = savedYours;
+    let changingYours = false;
+    let warning = "";
+
+    function factionName(key) {
+      const faction = factions.find(function (entry) { return entry[0] === key; });
+      return faction ? faction[1] : key;
+    }
+
+    function render() {
+      grid.replaceChildren();
+
+      factions.forEach(function (faction) {
+        const id = faction[0];
+        const name = faction[1];
+        const logo = faction[2];
+        const button = document.createElement("button");
+
+        button.type = "button";
+        button.className = "faction";
+        button.dataset.active = String(active.has(id));
+        button.dataset.you = String(yours === id);
+        button.setAttribute("aria-pressed", String(active.has(id)));
+        button.setAttribute("aria-label", name + (yours === id ? ", your faction" : active.has(id) ? ", in play" : ", not in play"));
+
+        const logoSlot = document.createElement("span");
+        logoSlot.className = "faction-logo-slot";
+        const image = document.createElement("img");
+        image.src = "img/" + logo;
+        image.alt = "";
+        logoSlot.appendChild(image);
+
+        const label = document.createElement("span");
+        label.className = "faction-name";
+        label.textContent = name;
+
+        button.append(logoSlot, label);
+        button.addEventListener("click", function () { selectFaction(id); });
+        grid.appendChild(button);
+      });
+
+      instructions.textContent = changingYours
+        ? "Choose your faction. Selecting it also adds it to the current game."
+        : "Select up to six factions taking part in this game.";
+      changeButton.textContent = changingYours ? "Cancel" : "Change your faction";
+      summary.textContent = "You are playing " + factionName(yours) + " · " + active.size + "/6 factions selected";
+      notice.textContent = warning || (active.size <= 6 ? (6 - active.size) + " places remaining" : active.size + " factions selected");
+      notice.dataset.warning = String(Boolean(warning));
+    }
+
+    function selectFaction(id) {
+      if (changingYours) {
+        yours = id;
+        active.add(id);
+        changingYours = false;
+      } else if (id === yours) {
+        changingYours = true;
+      } else if (active.has(id)) {
+        active.delete(id);
+      } else {
+        active.add(id);
+      }
+
+      warning = "";
+      render();
+    }
+
+    function renderGame() {
+      currentFactions.replaceChildren();
+
+      factions.filter(function (faction) {
+        return savedActive.has(faction[0]);
+      }).forEach(function (faction) {
+        const image = document.createElement("img");
+        image.src = "img/" + faction[2];
+        image.alt = faction[1] + (faction[0] === savedYours ? ", your faction" : "");
+        currentFactions.appendChild(image);
+      });
+
+      gameSummary.textContent = "You are playing " + factionName(savedYours) + " · " + savedActive.size + " factions";
+    }
+
+    function openSetup() {
+      active = new Set(savedActive);
+      yours = savedYours;
+      changingYours = false;
+      warning = "";
+      gameScreen.hidden = true;
+      setupScreen.hidden = false;
+      openButton.hidden = true;
+      render();
+    }
+
+    function closeSetup() {
+      setupScreen.hidden = true;
+      gameScreen.hidden = false;
+      openButton.hidden = false;
+      renderGame();
+    }
+
+    openButton.addEventListener("click", openSetup);
+    document.querySelector("#cancelSetup").addEventListener("click", closeSetup);
+    document.querySelector("#saveSetup").addEventListener("click", function () {
+      if (active.size > 6) {
+        warning = "Choose no more than six factions before continuing.";
+        render();
+        return;
+      }
+      savedActive = new Set(active);
+      savedYours = yours;
+      closeSetup();
+    });
+    changeButton.addEventListener("click", function () {
+      changingYours = !changingYours;
+      warning = "";
+      render();
+    });
+
+    renderGame();
+    if (new URLSearchParams(location.search).has("setup")) {
+      openSetup();
+    }
+  </script>
+</body>
+</html>

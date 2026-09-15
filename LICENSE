@@ -1,3 +1,18 @@
+SCOPE OF THIS LICENSE
+
+The MIT License below applies only to original software code contributed to
+Dune Battle Wheel, including its original HTML structure, CSS, JavaScript, and
+project scripts.
+
+It does not apply to game rules, game data, rulebook text, artwork, images,
+logos, fonts, trademarks, or any other third-party material included in the
+project.
+
+All third-party material remains subject to its respective owners' rights and
+any applicable licenses. No rights to that material are granted by this
+license.
+
+-------------------------------------------------------------------------------
 MIT License
 
 Copyright (c) 2026 Nacho
@@ -19,3 +34,4 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+

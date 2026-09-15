@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#263f5d" />
+    <title>Dune Battle Wheel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Balthazar&family=Fira+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header id="rulebook-header">
+        <h1 class="rulebook-title">
+          <img src="img/art-title.png" alt="DUNE" />
+          <span>BATTLE WHEEL</span>
+        </h1>
+      </header>
+
+      <main class="layout">
+        <section class="phase-callout panel controls-panel">
+          <h2>Battle plan</h2>
+          <div class="panel-body">
+            <div class="faction-picker">
+              <img id="factionLogo" class="faction-logo" src="img/AT-logo.png" alt="" />
+              <div class="field">
+                <label for="faction">Faction</label>
+                <select id="faction">
+                  <option value="atreides">Atreides</option>
+                  <option value="bene">Bene Gesserit</option>
+                  <option value="choam">CHOAM</option>
+                  <option value="emperor">Emperor</option>
+                  <option value="fremen">Fremen</option>
+                  <option value="harkonnen">Harkonnen</option>
+                  <option value="ixians">Ixians</option>
+                  <option value="richese">Richese</option>
+                  <option value="guild">Spacing Guild</option>
+                  <option value="tleilaxu">Tleilaxu</option>
+                  <option value="moritani">Moritani</option>
+                  <option value="ecaz">Ecaz</option>
+                </select>
+              </div>
+            </div>
+
+            <p id="factionRule" class="rule-note"></p>
+
+            <div class="field">
+              <label id="forcesLabel" for="forces">Forces</label>
+              <div class="stepper">
+                <button type="button" class="stepper-btn" data-target="forces" data-step="-1" aria-label="Remove one force">−</button>
+                <input id="forces" type="number" min="0" max="20" value="6" inputmode="numeric" />
+                <button type="button" class="stepper-btn" data-target="forces" data-step="1" aria-label="Add one force">+</button>
+              </div>
+            </div>
+
+            <div id="specialField" class="field" hidden>
+              <label id="specialLabel" for="specialForces">Special forces</label>
+              <div class="stepper">
+                <button type="button" class="stepper-btn" data-target="specialForces" data-step="-1" aria-label="Remove one special force">−</button>
+                <input id="specialForces" type="number" min="0" max="7" value="0" inputmode="numeric" />
+                <button type="button" class="stepper-btn" data-target="specialForces" data-step="1" aria-label="Add one special force">+</button>
+              </div>
+            </div>
+
+            <div id="spiceField" class="field">
+              <label for="spice">Spice support</label>
+              <div class="stepper">
+                <button type="button" class="stepper-btn" data-target="spice" data-step="-1" aria-label="Remove one spice">−</button>
+                <input id="spice" type="number" min="0" max="20" value="3" inputmode="numeric" />
+                <button type="button" class="stepper-btn" data-target="spice" data-step="1" aria-label="Add one spice">+</button>
+              </div>
+            </div>
+
+            <label id="fremenOpponentField" class="check-option" hidden>
+              <input id="fremenOpponent" type="checkbox" />
+              Fighting Fremen
+            </label>
+
+            <div class="field leader-field">
+              <span class="field-label">Leader or Cheap Hero</span>
+              <div id="leaderMenu" class="leader-menu leader-grid" role="listbox" aria-label="Choose a leader"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="phase-callout panel wheel-panel">
+          <h2>Combat wheel</h2>
+          <div class="panel-body wheel-body">
+            <div class="battle-wheel-wrap">
+              <div class="force-dial-display">
+                <div class="force-dial-display__window">
+                  <strong id="scoreValue" class="force-dial-display__value" aria-label="Dialed strength 0">
+                    <span>0</span>
+                  </strong>
+                </div>
+                <span class="force-dial-display__ticks" aria-hidden="true"></span>
+                <span class="force-dial-display__label">FORCE</span>
+              </div>
+
+              <div class="battle-wheel" id="battleWheel" aria-label="Dialed force strength">
+                <div id="dialMarks" class="dial-marks" aria-hidden="true"></div>
+                <div class="center-badge">
+                  <span class="score-caption">TOTAL STRENGTH</span>
+                  <strong id="centerTotalValue">0</strong>
+                  <small id="factionName">ATREIDES</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="score-grid" aria-live="polite">
+              <div>
+                <span>Forces</span>
+                <strong id="forceScore">0</strong>
+              </div>
+              <div>
+                <span>Leader</span>
+                <strong id="leaderScore">0</strong>
+              </div>
+              <div class="score-grid__total">
+                <span>Total</span>
+                <strong id="totalScore">0</strong>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="phase-callout panel report-panel">
+          <h2>Equipment &amp; resolution</h2>
+          <div class="panel-body">
+            <div class="field">
+              <label for="weapon">Weapon</label>
+              <select id="weapon">
+                <option value="none">No weapon</option>
+                <option value="projectile">Projectile weapon</option>
+                <option value="poison">Poison weapon</option>
+                <option value="lasgun">Lasgun</option>
+                <option value="worthless">Worthless card</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="defense">Defense</label>
+              <select id="defense">
+                <option value="none">No defense</option>
+                <option value="shield">Shield</option>
+                <option value="snooper">Snooper</option>
+                <option value="worthless">Worthless card</option>
+              </select>
+            </div>
+
+            <div id="battleStatus" class="battle-status" role="status" aria-live="polite"></div>
+            <ul id="battleLog" class="battle-log"></ul>
+
+            <button id="confirmBtn" class="primary-btn" type="button">Confirm battle plan</button>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <footer class="rulebook-footer" aria-hidden="true">
+      <p class="footer-artwork">
+        <img class="footer-worm-art" src="img/art-cover-worm.png" alt="" />
+        <img class="footer-fremen-art" src="img/art-fremen.png" alt="" />
+      </p>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
