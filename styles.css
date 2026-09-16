@@ -178,6 +178,13 @@ input {
   gap: 0.35rem;
 }
 
+.field-help {
+  display: block;
+  color: #4a4335;
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
 label {
   font-family: "Copperplate Gothic Bold", "Balthazar", serif;
   font-variant: small-caps;

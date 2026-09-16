@@ -9,11 +9,11 @@ const factionConfig = {
     logo: 'AT-logo.png',
     rule: 'Each force has a base strength of ½. Spend 1 spice per force to raise it to full strength.',
     leaders: [
-      ['Thufir Hawat', 5, 'AT-leader-thufir.png'],
-      ['Lady Jessica', 5, 'AT-leader-jessica.png'],
-      ['Gurney Halleck', 4, 'AT-leader-gurney.png'],
-      ['Duncan Idaho', 2, 'AT-leader-duncan.png'],
-      ['Dr. Yueh', 1, 'AT-leader-yueh.png']
+      ['Thufir Hawat', 5, 'hires-AT-leader-thufir.png'],
+      ['Lady Jessica', 5, 'hires-AT-leader-jessica.png'],
+      ['Gurney Halleck', 4, 'hires-AT-leader-gurney.png'],
+      ['Duncan Idaho', 2, 'hires-AT-leader-duncan.png'],
+      ['Dr. Yueh', 1, 'hires-AT-leader-yueh.png']
     ]
   },
   bene: {
@@ -22,11 +22,11 @@ const factionConfig = {
     logo: 'BG-logo.png',
     rule: 'Each fighting force has a base strength of ½. Spend 1 spice per force to raise it to full strength.',
     leaders: [
-      ['Alia', 5, 'BG-leader-alia.png'],
-      ['Margot Fenring', 5, 'BG-leader-fenning.png'],
-      ['Princess Irulan', 5, 'BG-leader-irulan.png'],
-      ['Wanna Marcus', 5, 'BG-leader-marcus.png'],
-      ['Mother Ramallo', 5, 'BG-leader-ramallo.png']
+      ['Alia', 5, 'hires-BG-leader-alia.png'],
+      ['Margot Fenring', 5, 'hires-BG-leader-fenning.png'],
+      ['Princess Irulan', 5, 'hires-BG-leader-irulan.png'],
+      ['Wanna Marcus', 5, 'hires-BG-leader-marcus.png'],
+      ['Mother Ramallo', 5, 'hires-BG-leader-ramallo.png']
     ]
   },
   choam: {
@@ -35,12 +35,12 @@ const factionConfig = {
     logo: 'CH-logo.png',
     rule: 'Each force has a base strength of ½. Spend 1 spice per force to raise it to full strength.',
     leaders: [
-      ['Frankos Aru', 4, 'CH-leader-frankos.png'],
-      ['Lady Jalma', 4, 'CH-leader-jalma.png'],
-      ['Rajiv Londine', 3, 'CH-leader-londine.png'],
-      ['Duke Verdun', 3, 'CH-leader-verdun.png'],
-      ['Auditor', 2, 'CH-leader-auditor.png'],
-      ['Viscount Tull', 2, 'CH-leader-tull.png']
+      ['Frankos Aru', 4, 'hires-CH-leader-frankos.png'],
+      ['Lady Jalma', 4, 'hires-CH-leader-jalma.png'],
+      ['Rajiv Londine', 3, 'hires-CH-leader-londine.png'],
+      ['Duke Verdun', 3, 'hires-CH-leader-verdun.png'],
+      ['Auditor', 2, 'hires-CH-leader-auditor.png'],
+      ['Viscount Tull', 2, 'hires-CH-leader-tull.png']
     ]
   },
   emperor: {
@@ -53,11 +53,11 @@ const factionConfig = {
     specialMultiplier: 2,
     rule: 'Sardaukar have a strength of 2. They count as ordinary forces when fighting Fremen.',
     leaders: [
-      ['Count Fenring', 6, 'EM-leader-fenning.png'],
-      ['Captain Aramsham', 5, 'EM-leader-aramsham.png'],
-      ['Caid', 3, 'EM-leader-caid.png'],
-      ['Burseg', 3, 'EM-leader-burseg.png'],
-      ['Bashar', 2, 'EM-leader-bashar.png']
+      ['Count Fenring', 6, 'hires-EM-leader-fenning.png'],
+      ['Captain Aramsham', 5, 'hires-EM-leader-aramsham.png'],
+      ['Caid', 3, 'hires-EM-leader-caid.png'],
+      ['Burseg', 3, 'hires-EM-leader-burseg.png'],
+      ['Bashar', 2, 'hires-EM-leader-bashar.png']
     ]
   },
   fremen: {
@@ -71,11 +71,11 @@ const factionConfig = {
     specialMultiplier: 2,
     rule: 'Fremen forces do not require spice support. Each Fedaykin has a strength of 2.',
     leaders: [
-      ['Stilgar', 7, 'FR-leader-stilgar.png'],
-      ['Chani', 6, 'FR-leader-chani.png'],
-      ['Otheym', 5, 'FR-leader-otheym.png'],
-      ['Shadout Mapes', 3, 'FR-leader-mapes.png'],
-      ['Jamis', 2, 'FR-leader-jamis.png']
+      ['Stilgar', 7, 'hires-FR-leader-stilgar.png'],
+      ['Chani', 6, 'hires-FR-leader-chani.png'],
+      ['Otheym', 5, 'hires-FR-leader-otheym.png'],
+      ['Shadout Mapes', 3, 'hires-FR-leader-mapes.png'],
+      ['Jamis', 2, 'hires-FR-leader-jamis.png']
     ]
   },
   harkonnen: {
@@ -84,11 +84,11 @@ const factionConfig = {
     logo: 'HK-logo.png',
     rule: 'Each force has a base strength of ½. Spend 1 spice per force to raise it to full strength.',
     leaders: [
-      ['Feyd-Rautha', 6, 'HK-leader-feyd.png'],
-      ['Beast Rabban', 4, 'HK-leader-beast.png'],
-      ['Piter De Vries', 3, 'HK-leader-vries.png'],
-      ['Captain Iakin Nefud', 2, 'HK-leader-nefud.png'],
-      ['Umman Kudu', 1, 'HK-leader-kudu.png']
+      ['Feyd-Rautha', 6, 'hires-HK-leader-feyd.png'],
+      ['Beast Rabban', 4, 'hires-HK-leader-beast.png'],
+      ['Piter De Vries', 3, 'hires-HK-leader-vries.png'],
+      ['Captain Iakin Nefud', 2, 'hires-HK-leader-nefud.png'],
+      ['Umman Kudu', 1, 'hires-HK-leader-kudu.png']
     ]
   },
   ixians: {
@@ -103,11 +103,11 @@ const factionConfig = {
     regularLabel: 'Suboids',
     rule: 'Each Cyborg has a strength of 2. Suboids are always worth ½ and Ixians cannot use spice support.',
     leaders: [
-      ["C'tair Pilru", 5, 'IX-leader-pilru.png'],
-      ['Tessia Vernius', 5, 'IX-leader-tesia.png'],
-      ['Dominic Vernius', 4, 'IX-leader-dominic.png'],
-      ['Kailea Vernius', 2, 'IX-leader-kailea.png'],
-      ['Cammar Pilru', 1, 'IX-leader-cammar.png']
+      ["C'tair Pilru", 5, 'hires-IX-leader-pilru.png'],
+      ['Tessia Vernius', 5, 'hires-IX-leader-tesia.png'],
+      ['Dominic Vernius', 4, 'hires-IX-leader-dominic.png'],
+      ['Kailea Vernius', 2, 'hires-IX-leader-kailea.png'],
+      ['Cammar Pilru', 1, 'hires-IX-leader-cammar.png']
     ]
   },
   richese: {
@@ -116,11 +116,11 @@ const factionConfig = {
     logo: 'RI-logo.png',
     rule: 'Each force has a base strength of ½. Spend 1 spice per force to raise it to full strength.',
     leaders: [
-      ['Ein Calimar', 5, 'RI-leader-ein.png'],
-      ['Lady Helena', 4, 'RI-leader-helena.png'],
-      ['Flinto Kinnis', 3, 'RI-leader-flinto.png'],
-      ['Talis Balt', 2, 'RI-leader-talis.png'],
-      ['Haloa Rund', 2, 'RI-leader-haloa.png']
+      ['Ein Calimar', 5, 'hires-RI-leader-ein.png'],
+      ['Lady Helena', 4, 'hires-RI-leader-helena.png'],
+      ['Flinto Kinnis', 3, 'hires-RI-leader-flinto.png'],
+      ['Talis Balt', 2, 'hires-RI-leader-talis.png'],
+      ['Haloa Rund', 2, 'hires-RI-leader-haloa.png']
     ]
   },
   guild: {
@@ -129,11 +129,11 @@ const factionConfig = {
     logo: 'SG-logo.png',
     rule: 'Each force has a base strength of ½. Spend 1 spice per force to raise it to full strength.',
     leaders: [
-      ['Staban Tuek', 5, 'SG-leader-staban.png'],
-      ['Esmar Tuek', 3, 'SG-leader-esmar.png'],
-      ['Master Bewt', 3, 'SG-leader-bewt.png'],
-      ['Soo-Soo Sook', 2, 'SG-leader-sook.png'],
-      ['Guild Representative', 1, 'SG-leader-guildrep.png']
+      ['Staban Tuek', 5, 'hires-SG-leader-staban.png'],
+      ['Esmar Tuek', 3, 'hires-SG-leader-esmar.png'],
+      ['Master Bewt', 3, 'hires-SG-leader-bewt.png'],
+      ['Soo-Soo Sook', 2, 'hires-SG-leader-sook.png'],
+      ['Guild Representative', 1, 'hires-SG-leader-guildrep.png']
     ]
   },
   tleilaxu: {
@@ -142,11 +142,11 @@ const factionConfig = {
     logo: 'TX-logo.png',
     rule: 'Each force has a base strength of ½. Spend 1 spice per force to raise it to full strength.',
     leaders: [
-      ['Zoal', 'X', 'TX-leader-zoal.png', true],
-      ['Hidar Fen Ajidica', 4, 'TX-leader-ajidica.png'],
-      ['Master Zaaf', 3, 'TX-leader-zaaf.png'],
-      ['Wykk', 2, 'TX-leader-wykk.png'],
-      ['Master Blin', 1, 'TX-leader-blin.png']
+      ['Zoal', 'X', 'hires-TX-leader-zoal.png', true],
+      ['Hidar Fen Ajidica', 4, 'hires-TX-leader-ajidica.png'],
+      ['Master Zaaf', 3, 'hires-TX-leader-zaaf.png'],
+      ['Wykk', 2, 'hires-TX-leader-wykk.png'],
+      ['Master Blin', 1, 'hires-TX-leader-blin.png']
     ]
   },
   moritani: {
@@ -155,12 +155,12 @@ const factionConfig = {
     logo: 'MO-logo.png',
     rule: 'Each force has a base strength of ½. Spend 1 spice per force to raise it to full strength.',
     leaders: [
-      ['Duke Prad Vidal', 6, 'MO-leader-vidal.png'],
-      ['Lupino Ord', 5, 'MO-leader-lupino.png'],
-      ['Hiih Resser', 4, 'MO-leader-hiih.png'],
-      ['Grieu Kronos', 4, 'MO-leader-grieu.png'],
-      ['Trin Kronos', 2, 'MO-leader-trin.png'],
-      ['Vando Terboli', 1, 'MO-leader-vando.png']
+      ['Duke Prad Vidal', 6, 'hires-MO-leader-vidal.png'],
+      ['Lupino Ord', 5, 'hires-MO-leader-lupino.png'],
+      ['Hiih Resser', 4, 'hires-MO-leader-hiih.png'],
+      ['Grieu Kronos', 4, 'hires-MO-leader-grieu.png'],
+      ['Trin Kronos', 2, 'hires-MO-leader-trin.png'],
+      ['Vando Terboli', 1, 'hires-MO-leader-vando.png']
     ]
   },
   ecaz: {
@@ -169,12 +169,12 @@ const factionConfig = {
     logo: 'EZ-logo.png',
     rule: 'Each force has a base strength of ½. Spend 1 spice per force to raise it to full strength.',
     leaders: [
-      ['Duke Prad Vidal', 6, 'EZ-leader-vidal.png'],
-      ['Sanya Ecaz', 4, 'EZ-leader-sanya.png'],
-      ['Whitmore Bludd', 4, 'EZ-leader-bludd.png'],
-      ['Ilesa Ecaz', 3, 'EZ-leader-ilesa.png'],
-      ["R'Rilly Dinari", 3, 'EZ-leader-dinari.png'],
-      ['Bindikk Narvi', 2, 'EZ-leader-narvi.png']
+      ['Duke Prad Vidal', 6, 'hires-EZ-leader-vidal.png'],
+      ['Sanya Ecaz', 4, 'hires-EZ-leader-sanya.png'],
+      ['Whitmore Bludd', 4, 'hires-EZ-leader-bludd.png'],
+      ['Ilesa Ecaz', 3, 'hires-EZ-leader-ilesa.png'],
+      ["R'Rilly Dinari", 3, 'hires-EZ-leader-dinari.png'],
+      ['Bindikk Narvi', 2, 'hires-EZ-leader-narvi.png']
     ]
   }
 };
@@ -227,6 +227,14 @@ const elements = {
   specialField: document.getElementById('specialField'),
   specialForces: document.getElementById('specialForces'),
   specialLabel: document.getElementById('specialLabel'),
+  ecazAllianceField: document.getElementById('ecazAllianceField'),
+  ecazAlliance: document.getElementById('ecazAlliance'),
+  ecazForcesField: document.getElementById('ecazForcesField'),
+  ecazForces: document.getElementById('ecazForces'),
+  ecazKaramaField: document.getElementById('ecazKaramaField'),
+  ecazKarama: document.getElementById('ecazKarama'),
+  ecazOpponentLeaderField: document.getElementById('ecazOpponentLeaderField'),
+  ecazOpponentLeaderStrength: document.getElementById('ecazOpponentLeaderStrength'),
   spiceField: document.getElementById('spiceField'),
   spice: document.getElementById('spice'),
   fremenOpponentField: document.getElementById('fremenOpponentField'),
@@ -312,6 +320,10 @@ function setFactionSelectionMode(hasFaction) {
   elements.confirmBtn.disabled = !hasFaction;
   elements.forces.disabled = !hasFaction;
   elements.specialForces.disabled = !hasFaction;
+  elements.ecazAlliance.disabled = !hasFaction;
+  elements.ecazForces.disabled = !hasFaction;
+  elements.ecazKarama.disabled = !hasFaction;
+  elements.ecazOpponentLeaderStrength.disabled = !hasFaction;
   elements.spice.disabled = !hasFaction;
   elements.fremenOpponent.disabled = !hasFaction;
   elements.kwisatzHaderach.disabled = !hasFaction;
@@ -343,9 +355,17 @@ function resetApplication({ clearStorage = true } = {}) {
   elements.forces.max = 20;
   elements.forces.value = 0;
   elements.specialForces.value = 0;
+  elements.ecazAlliance.checked = false;
+  elements.ecazForces.value = 0;
+  elements.ecazKarama.checked = false;
+  elements.ecazOpponentLeaderStrength.value = 0;
   elements.spice.value = 0;
   elements.fremenOpponent.checked = false;
   elements.specialField.hidden = true;
+  elements.ecazAllianceField.hidden = true;
+  elements.ecazForcesField.hidden = true;
+  elements.ecazKaramaField.hidden = true;
+  elements.ecazOpponentLeaderField.hidden = true;
   elements.spiceField.hidden = true;
   elements.fremenOpponentField.hidden = true;
   elements.leaderMenu.replaceChildren();
@@ -410,12 +430,37 @@ function updateKwisatzAvailability() {
   }
 }
 
+function updateEcazKaramaAvailability() {
+  const hasLeaderDisc = Boolean(
+    selectedLeader &&
+    selectedLeader.name !== 'No leader' &&
+    selectedLeader.name !== 'Cheap Hero'
+  );
+  const hasNoWeaponOrDefense = elements.weapon.value === 'none' && elements.defense.value === 'none';
+  const isEcaz = elements.faction.value === 'ecaz';
+  const eligible = isEcaz && hasLeaderDisc && hasNoWeaponOrDefense;
+
+  elements.ecazKaramaField.hidden = !isEcaz;
+  elements.ecazKarama.disabled = !eligible;
+
+  if (!eligible) {
+    elements.ecazKarama.checked = false;
+  }
+
+  elements.ecazOpponentLeaderField.hidden = !eligible || !elements.ecazKarama.checked;
+
+  if (elements.ecazOpponentLeaderField.hidden) {
+    elements.ecazOpponentLeaderStrength.value = 0;
+  }
+}
+
 function selectLeader(leader) {
   selectedLeader = leader;
   elements.resultLeaderKilled.checked = false;
   updateEquipmentAvailability();
   updateVariableLeaderField();
   updateKwisatzAvailability();
+  updateEcazKaramaAvailability();
   buildLeaderMenu();
   calculatePlan();
 }
@@ -709,6 +754,28 @@ function commitGameSetup() {
   hideGameSetup();
   updateFactionFields();
 }
+
+function updateEcazAllianceFields() {
+  const canAllyWithEcaz = Boolean(
+    factionConfig[elements.faction.value] &&
+    elements.faction.value !== 'ecaz' &&
+    factionsInPlay.has('ecaz')
+  );
+
+  elements.ecazAllianceField.hidden = !canAllyWithEcaz;
+
+  if (!canAllyWithEcaz) {
+    elements.ecazAlliance.checked = false;
+  }
+
+  const alliedWithEcaz = canAllyWithEcaz && elements.ecazAlliance.checked;
+  elements.ecazForcesField.hidden = !alliedWithEcaz;
+
+  if (!alliedWithEcaz) {
+    elements.ecazForces.value = 0;
+  }
+}
+
 function updateFactionFields() {
   const faction = factionConfig[elements.faction.value];
   if (!faction) return;
@@ -726,6 +793,7 @@ function updateFactionFields() {
   elements.specialField.hidden = !hasSpecialForces;
   elements.spiceField.hidden = !usesSpice;
   elements.fremenOpponentField.hidden = elements.faction.value !== 'emperor';
+  updateEcazAllianceFields();
 
   if (hasSpecialForces) {
     elements.specialLabel.textContent = faction.special;
@@ -744,6 +812,7 @@ function updateFactionFields() {
   updateEquipmentAvailability();
   updateVariableLeaderField();
   updateKwisatzAvailability();
+  updateEcazKaramaAvailability();
   leaderView = 'leaders';
   capturedFactionKey = null;
   buildLeaderMenu();
@@ -795,6 +864,14 @@ function getBattlePlanValues() {
 
   const forces = numericValue(elements.forces);
   const specialForces = numericValue(elements.specialForces);
+  const alliedWithEcaz = Boolean(
+    elements.faction.value !== 'ecaz' &&
+    factionsInPlay.has('ecaz') &&
+    elements.ecazAlliance.checked
+  );
+  const ecazForces = alliedWithEcaz ? numericValue(elements.ecazForces) : 0;
+  const ecazParticipatingForces = alliedWithEcaz ? Math.ceil(ecazForces / 2) : 0;
+  const ecazStrength = ecazParticipatingForces;
   const baseLeaderStrength = selectedLeader?.variableStrength
     ? numericValue(elements.variableLeaderStrength)
     : selectedLeader?.strength || 0;
@@ -806,6 +883,21 @@ function getBattlePlanValues() {
   );
   const kwisatzBonus = usesKwisatz ? 2 : 0;
   const leaderStrength = baseLeaderStrength + kwisatzBonus;
+  const usesEcazKarama = Boolean(
+    elements.faction.value === 'ecaz' &&
+    selectedLeader &&
+    selectedLeader.name !== 'No leader' &&
+    selectedLeader.name !== 'Cheap Hero' &&
+    elements.weapon.value === 'none' &&
+    elements.defense.value === 'none' &&
+    elements.ecazKarama.checked
+  );
+  const opponentLeaderStrength = usesEcazKarama
+    ? numericValue(elements.ecazOpponentLeaderStrength)
+    : 0;
+  const ecazKaramaBonus = usesEcazKarama
+    ? Math.abs(baseLeaderStrength - opponentLeaderStrength)
+    : 0;
   let spice = numericValue(elements.spice);
   let ordinaryStrength;
 
@@ -827,17 +919,24 @@ function getBattlePlanValues() {
   }
 
   const specialStrength = specialForces * specialMultiplier;
-  const forceStrength = ordinaryStrength + specialStrength;
+  const forceStrength = ordinaryStrength + specialStrength + ecazStrength + ecazKaramaBonus;
 
   return {
     faction,
     forces,
     specialForces,
+    alliedWithEcaz,
+    ecazForces,
+    ecazParticipatingForces,
+    ecazStrength,
     spice,
     leaderStrength,
     baseLeaderStrength,
     usesKwisatz,
     kwisatzBonus,
+    usesEcazKarama,
+    opponentLeaderStrength,
+    ecazKaramaBonus,
     baseForceStrength: faction.fullStrength ? forces : forces / 2,
     spiceStrength: !faction.fullStrength && !faction.fixedHalfStrength ? spice / 2 : 0,
     specialMultiplier,
@@ -851,7 +950,21 @@ function calculatePlan() {
   const plan = getBattlePlanValues();
   if (!plan) return;
 
-  const { faction, forces, specialForces, spice, leaderStrength, forceStrength, total } = plan;
+  const {
+    faction,
+    forces,
+    specialForces,
+    alliedWithEcaz,
+    ecazForces,
+    ecazParticipatingForces,
+    usesEcazKarama,
+    opponentLeaderStrength,
+    ecazKaramaBonus,
+    spice,
+    leaderStrength,
+    forceStrength,
+    total
+  } = plan;
   const status = equipmentStatus();
   const variableLeader = Boolean(selectedLeader?.variableStrength);
   elements.previewForces.textContent = formatScore(forceStrength);
@@ -873,6 +986,9 @@ function calculatePlan() {
   if (specialForces > 0 && faction.special) {
     forceParts.push(specialForces + ' ' + faction.special);
   }
+  if (alliedWithEcaz) {
+    forceParts.push(ecazParticipatingForces + ' of ' + ecazForces + ' allied Ecaz forces');
+  }
 
   const supportText = faction.fullStrength
     ? 'No spice support required.'
@@ -880,11 +996,19 @@ function calculatePlan() {
       ? 'Suboids remain at ½ strength; Ixians cannot use spice support.'
       : spice + ' spice committed as support.';
 
-  renderList([
+  const battleLogItems = [
     forceParts.join(' + ') + '.',
-    supportText,
+    supportText
+  ];
+  if (usesEcazKarama) {
+    battleLogItems.push(
+      'Ecaz Special Karama: |' + formatScore(plan.baseLeaderStrength) + ' − ' + formatScore(opponentLeaderStrength) + '| = +' + formatScore(ecazKaramaBonus) + ' to the number dialed.'
+    );
+  }
+  battleLogItems.push(
     'Dialed strength: ' + formatScore(forceStrength) + ' + leader ' + formatScore(leaderStrength) + ' = ' + formatScore(total) + '.'
-  ]);
+  );
+  renderList(battleLogItems);
 
   if (!elements.battlePlanResult.hidden) {
     renderBattlePlanResult(plan);
@@ -935,6 +1059,20 @@ function renderStrengthBreakdown(plan, effectiveLeaderStrength, leaderKilled) {
     addRow(
       plan.faction.special,
       plan.specialForces + ' × ' + plan.specialMultiplier + ' = +' + formatScore(plan.specialStrength)
+    );
+  }
+
+  if (plan.alliedWithEcaz) {
+    addRow(
+      'Allied Ecaz forces',
+      '⌈' + plan.ecazForces + ' ÷ 2⌉ × 1 = +' + formatScore(plan.ecazStrength)
+    );
+  }
+
+  if (plan.usesEcazKarama) {
+    addRow(
+      'Ecaz Special Karama',
+      '|' + formatScore(plan.baseLeaderStrength) + ' − ' + formatScore(plan.opponentLeaderStrength) + '| = +' + formatScore(plan.ecazKaramaBonus)
     );
   }
 
@@ -1040,12 +1178,29 @@ document.querySelectorAll('.stepper-btn').forEach((button) => {
   });
 });
 
+elements.ecazAlliance.addEventListener('change', () => {
+  updateEcazAllianceFields();
+  calculatePlan();
+});
+
+elements.ecazKarama.addEventListener('change', () => {
+  updateEcazKaramaAvailability();
+  calculatePlan();
+});
+
+[elements.weapon, elements.defense].forEach((control) => {
+  control.addEventListener('change', () => {
+    updateEcazKaramaAvailability();
+    calculatePlan();
+  });
+});
+
 [
   elements.forces,
   elements.specialForces,
+  elements.ecazForces,
+  elements.ecazOpponentLeaderStrength,
   elements.spice,
-  elements.weapon,
-  elements.defense,
   elements.fremenOpponent,
   elements.kwisatzHaderach,
   elements.variableLeaderStrength

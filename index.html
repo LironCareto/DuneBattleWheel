@@ -74,6 +74,21 @@
               </div>
             </div>
 
+            <label id="ecazAllianceField" class="check-option" hidden>
+              <input id="ecazAlliance" type="checkbox" />
+              Are you allied with Ecaz?
+            </label>
+
+            <div id="ecazForcesField" class="field" hidden>
+              <label for="ecazForces">Ecaz forces in territory</label>
+              <div class="stepper">
+                <button type="button" class="stepper-btn" data-target="ecazForces" data-step="-1" aria-label="Remove one Ecaz force">−</button>
+                <input id="ecazForces" type="number" min="0" max="20" value="0" inputmode="numeric" aria-describedby="ecazForcesHelp" />
+                <button type="button" class="stepper-btn" data-target="ecazForces" data-step="1" aria-label="Add one Ecaz force">+</button>
+              </div>
+              <small id="ecazForcesHelp" class="field-help">Only half of the Ecaz forces, rounded up, participate at full strength.</small>
+            </div>
+
             <div id="spiceField" class="field">
               <label for="spice">Spice support</label>
               <div class="stepper">
@@ -126,6 +141,23 @@
                 <option value="snooper">Snooper</option>
                 <option value="worthless">Worthless card</option>
               </select>
+            </div>
+
+            <div id="ecazKaramaField" class="field" hidden>
+              <label class="check-option">
+                <input id="ecazKarama" type="checkbox" />
+                Use Ecaz Special Karama Power (requires Karama Card)
+              </label>
+              <small class="field-help">Play neither a weapon nor a defense.</small>
+            </div>
+
+            <div id="ecazOpponentLeaderField" class="field" hidden>
+              <label for="ecazOpponentLeaderStrength">Opponent leader strength</label>
+              <div class="stepper">
+                <button type="button" class="stepper-btn" data-target="ecazOpponentLeaderStrength" data-step="-1" aria-label="Reduce opponent leader strength by one">−</button>
+                <input id="ecazOpponentLeaderStrength" type="number" min="0" max="7" value="0" inputmode="numeric" />
+                <button type="button" class="stepper-btn" data-target="ecazOpponentLeaderStrength" data-step="1" aria-label="Increase opponent leader strength by one">+</button>
+              </div>
             </div>
 
             <div class="preparation-preview" aria-live="polite">
@@ -239,6 +271,6 @@
       </p>
     </footer>
 
-    <script src="script.js?v=20260916-cheap-hero"></script>
+    <script src="script.js?v=20260916-hires-leaders"></script>
   </body>
 </html>
