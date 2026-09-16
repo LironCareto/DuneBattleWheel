@@ -218,8 +218,9 @@ const elements = {
   gameSetupInstructions: document.getElementById('gameSetupInstructions'),
   gameSetupNotice: document.getElementById('gameSetupNotice'),
   gameSetupSummary: document.getElementById('gameSetupSummary'),
-  changeYourFaction: document.getElementById('changeYourFaction'),
   cancelGameSetup: document.getElementById('cancelGameSetup'),
+  backGameSetup: document.getElementById('backGameSetup'),
+  advanceGameSetup: document.getElementById('advanceGameSetup'),
   saveGameSetup: document.getElementById('saveGameSetup'),
   forces: document.getElementById('forces'),
   forcesLabel: document.getElementById('forcesLabel'),
@@ -242,13 +243,27 @@ const elements = {
   confirmBtn: document.getElementById('confirmBtn')
 };
 
+const titleLogo = document.querySelector('.rulebook-title > img');
+const titleText = document.querySelector('.rulebook-title .heading-text-slot .heading-text');
+const titleSizeReference = document.querySelector('.rulebook-title .title-size-reference');
+
+function matchTitleLogoWidth() {
+  const referenceWidth = titleSizeReference.getBoundingClientRect().width;
+  titleLogo.style.width = referenceWidth + 'px';
+  titleLogo.style.height = 'auto';
+}
+
+matchTitleLogoWidth();
+document.fonts.ready.then(matchTitleLogoWidth);
+new ResizeObserver(matchTitleLogoWidth).observe(titleText);
+
 let selectedLeader = null;
 let leaderView = 'leaders';
 let capturedFactionKey = null;
 let factionsInPlay = new Set();
 let setupDraftFactions = new Set();
 let setupDraftYourFaction = 'atreides';
-let changingYourFaction = false;
+let gameSetupStep = 'factions';
 let gameSetupWarning = '';
 
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
@@ -310,7 +325,7 @@ function resetApplication({ clearStorage = true } = {}) {
   factionsInPlay = new Set();
   setupDraftFactions = new Set();
   setupDraftYourFaction = '';
-  changingYourFaction = false;
+  gameSetupStep = 'factions';
   gameSetupWarning = '';
   selectedLeader = null;
   leaderView = 'leaders';
@@ -580,16 +595,20 @@ function buildLeaderMenu() {
 
 function renderGameSetup() {
   elements.gameSetupGrid.replaceChildren();
+  const selectingYourFaction = gameSetupStep === 'your-faction';
 
   FACTION_ORDER.forEach((key) => {
     const faction = factionConfig[key];
+    const isActive = setupDraftFactions.has(key);
+    const isYourFaction = selectingYourFaction && setupDraftYourFaction === key;
     const button = document.createElement('button');
     button.type = 'button';
     button.className = 'game-setup-faction';
-    button.dataset.active = String(setupDraftFactions.has(key));
-    button.dataset.you = String(setupDraftYourFaction === key);
-    button.setAttribute('aria-pressed', String(setupDraftFactions.has(key)));
-    button.setAttribute('aria-label', faction.name + (setupDraftYourFaction === key ? ', your faction' : setupDraftFactions.has(key) ? ', in play' : ', not in play'));
+    button.dataset.active = String(isActive);
+    button.dataset.you = String(isYourFaction);
+    button.disabled = selectingYourFaction && !isActive;
+    button.setAttribute('aria-pressed', String(selectingYourFaction ? isYourFaction : isActive));
+    button.setAttribute('aria-label', faction.name + (isYourFaction ? ', your faction' : isActive ? ', in play' : ', not in play'));
 
     const image = document.createElement('img');
     image.className = 'game-setup-logo';
@@ -602,43 +621,53 @@ function renderGameSetup() {
 
     button.append(image, name);
     button.addEventListener('click', () => {
-      if (changingYourFaction) {
-        setupDraftYourFaction = key;
-        setupDraftFactions.add(key);
-        changingYourFaction = false;
-      } else if (key === setupDraftYourFaction) {
-        changingYourFaction = true;
-      } else if (setupDraftFactions.has(key)) {
+      gameSetupWarning = '';
+
+      if (selectingYourFaction) {
+        setupDraftYourFaction = isYourFaction ? '' : key;
+      } else if (isActive) {
         setupDraftFactions.delete(key);
-      } else {
+        if (setupDraftYourFaction === key) setupDraftYourFaction = '';
+      } else if (setupDraftFactions.size < 6) {
         setupDraftFactions.add(key);
+      } else {
+        gameSetupWarning = 'Six factions are already selected.';
       }
 
-      gameSetupWarning = '';
       renderGameSetup();
     });
 
     elements.gameSetupGrid.appendChild(button);
   });
 
-  const hasYourFaction = Boolean(factionConfig[setupDraftYourFaction]);
+  const hasYourFaction = Boolean(
+    factionConfig[setupDraftYourFaction] && setupDraftFactions.has(setupDraftYourFaction)
+  );
 
-  elements.gameSetupInstructions.textContent = changingYourFaction
-    ? 'Choose your faction. Selecting it also adds it to the current game.'
-    : 'Select the factions taking part in this game.';
-  elements.changeYourFaction.textContent = changingYourFaction ? 'Cancel' : 'Change your faction';
-  elements.changeYourFaction.hidden = !hasYourFaction;
-  elements.gameSetupSummary.textContent = hasYourFaction
-    ? 'You are playing ' + factionConfig[setupDraftYourFaction].name + ' · ' + setupDraftFactions.size + ' factions selected'
-    : 'Choose your faction · ' + setupDraftFactions.size + ' factions selected';
-  elements.gameSetupNotice.textContent = gameSetupWarning || (setupDraftFactions.size <= 6 ? 6 - setupDraftFactions.size + ' places remaining' : setupDraftFactions.size + ' factions selected');
+  elements.gameSetupGrid.setAttribute('aria-label', selectingYourFaction ? 'Choose your faction' : 'Factions in play');
+  elements.gameSetupInstructions.textContent = selectingYourFaction
+    ? 'Confirm which of the six factions is yours.'
+    : 'Select the six factions in play, then confirm which one is yours.';
+  elements.gameSetupSummary.textContent = selectingYourFaction
+    ? hasYourFaction ? 'You are playing ' + factionConfig[setupDraftYourFaction].name : 'No faction assigned to you'
+    : setupDraftFactions.size + ' of 6 factions selected';
+  elements.gameSetupNotice.textContent = gameSetupWarning || (selectingYourFaction
+    ? hasYourFaction ? factionConfig[setupDraftYourFaction].name + ' selected' : 'Choose one of the selected factions.'
+    : setupDraftFactions.size === 6 ? 'Six factions selected. Continue to choose your own.' : 6 - setupDraftFactions.size + ' places remaining');
   elements.gameSetupNotice.dataset.warning = String(Boolean(gameSetupWarning));
+  elements.cancelGameSetup.hidden = selectingYourFaction;
+  elements.backGameSetup.hidden = !selectingYourFaction;
+  elements.advanceGameSetup.hidden = selectingYourFaction;
+  elements.advanceGameSetup.disabled = setupDraftFactions.size !== 6;
+  elements.saveGameSetup.hidden = !selectingYourFaction;
+  elements.saveGameSetup.disabled = !hasYourFaction;
 }
 
 function showGameSetup() {
   setupDraftFactions = new Set(factionsInPlay);
   setupDraftYourFaction = elements.faction.value;
-  changingYourFaction = !factionConfig[setupDraftYourFaction];
+  if (!setupDraftFactions.has(setupDraftYourFaction)) setupDraftYourFaction = '';
+  gameSetupStep = 'factions';
   gameSetupWarning = '';
   elements.appLayout.hidden = true;
   elements.gameSetup.hidden = false;
@@ -653,15 +682,16 @@ function hideGameSetup() {
 }
 
 function commitGameSetup() {
-  if (!factionConfig[setupDraftYourFaction]) {
-    gameSetupWarning = 'Choose your faction before continuing.';
-    changingYourFaction = true;
+  if (setupDraftFactions.size !== 6) {
+    gameSetupWarning = 'Choose exactly six factions before continuing.';
+    gameSetupStep = 'factions';
     renderGameSetup();
     return;
   }
 
-  if (setupDraftFactions.size > 6) {
-    gameSetupWarning = 'Choose no more than six factions before continuing.';
+  if (!factionConfig[setupDraftYourFaction] || !setupDraftFactions.has(setupDraftYourFaction)) {
+    gameSetupWarning = 'Choose your faction before continuing.';
+    gameSetupStep = 'your-faction';
     renderGameSetup();
     return;
   }
@@ -1049,12 +1079,19 @@ elements.resetApplication.addEventListener('keydown', (event) => {
 });
 elements.setupTrigger.addEventListener('click', showGameSetup);
 elements.cancelGameSetup.addEventListener('click', hideGameSetup);
-elements.saveGameSetup.addEventListener('click', commitGameSetup);
-elements.changeYourFaction.addEventListener('click', () => {
-  changingYourFaction = !changingYourFaction;
+elements.backGameSetup.addEventListener('click', () => {
+  gameSetupStep = 'factions';
   gameSetupWarning = '';
   renderGameSetup();
 });
+elements.advanceGameSetup.addEventListener('click', () => {
+  if (setupDraftFactions.size !== 6) return;
+  if (!setupDraftFactions.has(setupDraftYourFaction)) setupDraftYourFaction = '';
+  gameSetupStep = 'your-faction';
+  gameSetupWarning = '';
+  renderGameSetup();
+});
+elements.saveGameSetup.addEventListener('click', commitGameSetup);
 elements.confirmBtn.addEventListener('click', showBattlePlanResult);
 elements.backToPlan.addEventListener('click', hideBattlePlanResult);
 elements.resultLeaderKilled.addEventListener('change', () => renderBattlePlanResult());

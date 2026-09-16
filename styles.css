@@ -80,6 +80,29 @@ input {
   object-fit: contain;
 }
 
+.rulebook-title .heading-text {
+  display: inline-block;
+  width: calc(100% / 1.5);
+  transform: scaleX(1.5);
+  transform-origin: center;
+  overflow-wrap: anywhere;
+}
+
+.rulebook-title > .heading-text-slot {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+
+.rulebook-title > .title-size-reference {
+  position: absolute;
+  display: inline-block;
+  visibility: hidden;
+  pointer-events: none;
+  transform: scaleX(1.5);
+  transform-origin: center;
+}
+
 /* App layout: only the geometry is specific to Battle Wheel. */
 .layout {
   display: grid;
@@ -1194,18 +1217,6 @@ input[type="range"] {
   color: #664d03;
 }
 
-.game-setup-change {
-  display: block;
-  margin: 0.3rem auto 0;
-  padding: 0.55rem 0.8rem;
-  border: 1px solid var(--blue-heading);
-  border-radius: 0.25rem;
-  background: var(--blue-heading);
-  color: #fff;
-  cursor: pointer;
-  font-size: 0.78rem;
-}
-
 .game-setup-summary {
   margin: 0.8rem 0 0;
   color: #58544b;
@@ -1225,21 +1236,6 @@ input[type="range"] {
   background: rgb(233 227 208 / 96%);
 }
 
-.game-setup-actions button {
-  min-height: 2.65rem;
-  border: 1px solid #b7b0a1;
-  border-radius: 0.25rem;
-  background: #f5f4f0;
-  color: #333;
-  cursor: pointer;
-}
-
-.game-setup-actions .game-setup-done {
-  border-color: var(--blue-heading);
-  background: var(--blue-heading);
-  color: #fff;
-}
-
 @media (max-width: 50rem) {
   .layout { grid-template-columns: 1fr; }
 }
@@ -1255,6 +1251,18 @@ input[type="range"] {
   min-height: 3.2rem;
   margin: 0;
   font-size: 1rem;
+}
+
+.secondary-btn {
+  border-color: #b7b0a1;
+  background: #f5f4f0;
+  color: var(--blue-heading);
+  text-shadow: none;
+}
+
+.secondary-btn:hover {
+  background: var(--sand-light);
+  color: var(--blue-heading);
 }
 
 .battle-plan-result {
@@ -1522,20 +1530,6 @@ input[type="range"] {
 .preparation-score-grid,
 .result-score-grid {
   width: 100%;
-}
-
-.result-back-button {
-  min-height: 2.8rem;
-  border: 1px solid #aaa;
-  border-radius: .25rem;
-  background: #f7f7f7;
-  color: #1d2f46;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.result-back-button:hover {
-  background: var(--sand-light);
 }
 
 @media (max-width: 50rem) {

@@ -17,15 +17,16 @@
     <link rel="stylesheet" href="styles.css?v=20260916-gitignore" />
   </head>
   <body>
-    <div class="app-shell">
-      <header id="rulebook-header">
-        <h1 id="resetApplication" class="rulebook-title" role="button" tabindex="0" aria-label="Reset application" title="Reset application">
-          <img src="img/art-title.png" alt="DUNE" />
-          <span>BATTLE WHEEL</span>
-        </h1>
-        <button id="openGameSetup" class="setup-trigger" type="button" disabled>Setup</button>
-      </header>
+    <header id="rulebook-header">
+      <h1 id="resetApplication" class="rulebook-title" role="button" tabindex="0" aria-label="Reset application" title="Reset application">
+        <img src="img/art-title.png" alt="DUNE" />
+        <span class="heading-text-slot"><span class="heading-text">BATTLE WHEEL</span></span>
+        <span class="title-size-reference" aria-hidden="true">DYNAMIC RULEBOOK</span>
+      </h1>
+      <button id="openGameSetup" class="setup-trigger" type="button" disabled>Setup</button>
+    </header>
 
+    <div class="app-shell">
       <main id="appLayout" class="layout">
         <section class="phase-callout panel controls-panel">
           <h2>Battle plan</h2>
@@ -208,7 +209,7 @@
               </div>
 
               <p id="resultOutcome" class="battle-status battle-status--neutral"></p>
-              <button id="backToPlan" class="result-back-button" type="button">Back</button>
+              <button id="backToPlan" class="primary-btn plan-confirm-button secondary-btn" type="button">Back</button>
             </div>
           </div>
         </div>
@@ -217,14 +218,15 @@
       <section id="gameSetup" class="phase-callout game-setup-panel" hidden>
         <h2>Game setup</h2>
         <div class="panel-body game-setup-body">
-          <p id="gameSetupInstructions" class="game-setup-instructions">Select the factions taking part in this game.</p>
+          <p id="gameSetupInstructions" class="game-setup-instructions">Select the six factions in play, then confirm which one is yours.</p>
           <div id="gameSetupGrid" class="game-setup-grid" role="group" aria-label="Factions in play"></div>
           <p id="gameSetupNotice" class="game-setup-notice" role="status" aria-live="polite"></p>
-          <button id="changeYourFaction" class="game-setup-change" type="button">Change your faction</button>
           <p id="gameSetupSummary" class="game-setup-summary" aria-live="polite"></p>
           <div class="game-setup-actions">
-            <button id="cancelGameSetup" type="button">Cancel</button>
-            <button id="saveGameSetup" class="game-setup-done" type="button">Done</button>
+            <button id="cancelGameSetup" class="primary-btn plan-confirm-button secondary-btn" type="button">Cancel</button>
+            <button id="backGameSetup" class="primary-btn plan-confirm-button secondary-btn" type="button" hidden>Back</button>
+            <button id="advanceGameSetup" class="primary-btn plan-confirm-button" type="button">Next</button>
+            <button id="saveGameSetup" class="primary-btn plan-confirm-button" type="button" hidden>Done</button>
           </div>
         </div>
       </section>
