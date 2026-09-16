@@ -8,26 +8,29 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Balthazar&family=Fira+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=20260916-leader-values" />
   </head>
   <body>
     <div class="app-shell">
       <header id="rulebook-header">
-        <h1 class="rulebook-title">
+        <h1 id="resetApplication" class="rulebook-title" role="button" tabindex="0" aria-label="Reset application" title="Reset application">
           <img src="img/art-title.png" alt="DUNE" />
           <span>BATTLE WHEEL</span>
         </h1>
+        <button id="openGameSetup" class="setup-trigger" type="button" disabled>Setup</button>
       </header>
 
-      <main class="layout">
+      <main id="appLayout" class="layout">
         <section class="phase-callout panel controls-panel">
           <h2>Battle plan</h2>
           <div class="panel-body">
             <div class="faction-picker">
-              <img id="factionLogo" class="faction-logo" src="img/AT-logo.png" alt="" />
+              <img id="factionLogo" class="faction-logo" src="img/AT-logo.png" alt="" hidden />
               <div class="field">
-                <label for="faction">Faction</label>
-                <select id="faction">
+                <span class="field-label">Your faction</span>
+                <strong id="currentFactionName" class="current-faction-name" hidden></strong>
+                <select id="faction" aria-label="Choose your faction">
+                  <option value="" selected disabled>Choose a faction</option>
                   <option value="atreides">Atreides</option>
                   <option value="bene">Bene Gesserit</option>
                   <option value="choam">CHOAM</option>
@@ -81,46 +84,14 @@
             <div class="field leader-field">
               <span class="field-label">Leader or Cheap Hero</span>
               <div id="leaderMenu" class="leader-menu leader-grid" role="listbox" aria-label="Choose a leader"></div>
-            </div>
-          </div>
-        </section>
-
-        <section class="phase-callout panel wheel-panel">
-          <h2>Combat wheel</h2>
-          <div class="panel-body wheel-body">
-            <div class="battle-wheel-wrap">
-              <div class="force-dial-display">
-                <div class="force-dial-display__window">
-                  <strong id="scoreValue" class="force-dial-display__value" aria-label="Dialed strength 0">
-                    <span>0</span>
-                  </strong>
+              <div id="variableLeaderField" class="field variable-leader-field" hidden>
+                <label for="variableLeaderStrength">Opponent leader strength</label>
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" data-target="variableLeaderStrength" data-step="-1" aria-label="Reduce opponent leader strength by one">−</button>
+                  <input id="variableLeaderStrength" type="number" min="0" max="7" value="0" inputmode="numeric" />
+                  <button type="button" class="stepper-btn" data-target="variableLeaderStrength" data-step="1" aria-label="Increase opponent leader strength by one">+</button>
                 </div>
-                <span class="force-dial-display__ticks" aria-hidden="true"></span>
-                <span class="force-dial-display__label">FORCE</span>
-              </div>
-
-              <div class="battle-wheel" id="battleWheel" aria-label="Dialed force strength">
-                <div id="dialMarks" class="dial-marks" aria-hidden="true"></div>
-                <div class="center-badge">
-                  <span class="score-caption">TOTAL STRENGTH</span>
-                  <strong id="centerTotalValue">0</strong>
-                  <small id="factionName">ATREIDES</small>
-                </div>
-              </div>
-            </div>
-
-            <div class="score-grid" aria-live="polite">
-              <div>
-                <span>Forces</span>
-                <strong id="forceScore">0</strong>
-              </div>
-              <div>
-                <span>Leader</span>
-                <strong id="leaderScore">0</strong>
-              </div>
-              <div class="score-grid__total">
-                <span>Total</span>
-                <strong id="totalScore">0</strong>
+                <small>Zoal matches the printed strength of the opposing leader; use 0 against a Cheap Hero.</small>
               </div>
             </div>
           </div>
@@ -131,7 +102,7 @@
           <div class="panel-body">
             <div class="field">
               <label for="weapon">Weapon</label>
-              <select id="weapon">
+              <select id="weapon" disabled>
                 <option value="none">No weapon</option>
                 <option value="projectile">Projectile weapon</option>
                 <option value="poison">Poison weapon</option>
@@ -142,7 +113,7 @@
 
             <div class="field">
               <label for="defense">Defense</label>
-              <select id="defense">
+              <select id="defense" disabled>
                 <option value="none">No defense</option>
                 <option value="shield">Shield</option>
                 <option value="snooper">Snooper</option>
@@ -153,10 +124,24 @@
             <div id="battleStatus" class="battle-status" role="status" aria-live="polite"></div>
             <ul id="battleLog" class="battle-log"></ul>
 
-            <button id="confirmBtn" class="primary-btn" type="button">Confirm battle plan</button>
+            <button id="confirmBtn" class="primary-btn" type="button" disabled>Confirm battle plan</button>
           </div>
         </section>
       </main>
+      <section id="gameSetup" class="phase-callout game-setup-panel" hidden>
+        <h2>Game setup</h2>
+        <div class="panel-body game-setup-body">
+          <p id="gameSetupInstructions" class="game-setup-instructions">Select the factions taking part in this game.</p>
+          <div id="gameSetupGrid" class="game-setup-grid" role="group" aria-label="Factions in play"></div>
+          <p id="gameSetupNotice" class="game-setup-notice" role="status" aria-live="polite"></p>
+          <button id="changeYourFaction" class="game-setup-change" type="button">Change your faction</button>
+          <p id="gameSetupSummary" class="game-setup-summary" aria-live="polite"></p>
+          <div class="game-setup-actions">
+            <button id="cancelGameSetup" type="button">Cancel</button>
+            <button id="saveGameSetup" class="game-setup-done" type="button">Done</button>
+          </div>
+        </div>
+      </section>
     </div>
 
     <footer class="rulebook-footer" aria-hidden="true">
@@ -166,6 +151,6 @@
       </p>
     </footer>
 
-    <script src="script.js"></script>
+    <script src="script.js?v=20260916-leader-values"></script>
   </body>
 </html>

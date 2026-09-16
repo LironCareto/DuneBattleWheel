@@ -1,4 +1,6 @@
 const SELECTED_FACTION_STORAGE_KEY = 'duneBattleWheel.selectedFaction';
+const FACTIONS_IN_PLAY_STORAGE_KEY = 'duneBattleWheel.factionsInPlay';
+const FACTION_ORDER = ['atreides', 'bene', 'choam', 'ecaz', 'emperor', 'fremen', 'harkonnen', 'ixians', 'moritani', 'richese', 'guild', 'tleilaxu'];
 
 const factionConfig = {
   atreides: {
@@ -33,12 +35,12 @@ const factionConfig = {
     logo: 'CH-logo.png',
     rule: 'Each force has a base strength of ½. Spend 1 spice per force to raise it to full strength.',
     leaders: [
-      ['Auditor', 4, 'CH-leader-auditor.png'],
       ['Frankos Aru', 4, 'CH-leader-frankos.png'],
-      ['Jalma', 3, 'CH-leader-jalma.png'],
-      ['Londine', 3, 'CH-leader-londine.png'],
-      ['Tull', 2, 'CH-leader-tull.png'],
-      ['Duke Verdun', 2, 'CH-leader-verdun.png']
+      ['Lady Jalma', 4, 'CH-leader-jalma.png'],
+      ['Rajiv Londine', 3, 'CH-leader-londine.png'],
+      ['Duke Verdun', 3, 'CH-leader-verdun.png'],
+      ['Auditor', 2, 'CH-leader-auditor.png'],
+      ['Viscount Tull', 2, 'CH-leader-tull.png']
     ]
   },
   emperor: {
@@ -101,11 +103,11 @@ const factionConfig = {
     regularLabel: 'Suboids',
     rule: 'Each Cyborg has a strength of 2. Suboids are always worth ½ and Ixians cannot use spice support.',
     leaders: [
-      ['Cammar Pilru', 5, 'IX-leader-cammar.png'],
-      ['Dominic Vernius', 5, 'IX-leader-dominic.png'],
-      ['Kailea Vernius', 4, 'IX-leader-kailea.png'],
-      ['Prince Rhombur', 2, 'IX-leader-pilru.png'],
-      ['Tessia Vernius', 1, 'IX-leader-tesia.png']
+      ["C'tair Pilru", 5, 'IX-leader-pilru.png'],
+      ['Tessia Vernius', 5, 'IX-leader-tesia.png'],
+      ['Dominic Vernius', 4, 'IX-leader-dominic.png'],
+      ['Kailea Vernius', 2, 'IX-leader-kailea.png'],
+      ['Cammar Pilru', 1, 'IX-leader-cammar.png']
     ]
   },
   richese: {
@@ -114,11 +116,11 @@ const factionConfig = {
     logo: 'RI-logo.png',
     rule: 'Each force has a base strength of ½. Spend 1 spice per force to raise it to full strength.',
     leaders: [
-      ['Talis', 5, 'RI-leader-talis.png'],
-      ['Helena', 3, 'RI-leader-helena.png'],
-      ['Haloa', 3, 'RI-leader-haloa.png'],
-      ['Flinto', 2, 'RI-leader-flinto.png'],
-      ['Ein', 1, 'RI-leader-ein.png']
+      ['Ein Calimar', 5, 'RI-leader-ein.png'],
+      ['Lady Helena', 4, 'RI-leader-helena.png'],
+      ['Flinto Kinnis', 3, 'RI-leader-flinto.png'],
+      ['Talis Balt', 2, 'RI-leader-talis.png'],
+      ['Haloa Rund', 2, 'RI-leader-haloa.png']
     ]
   },
   guild: {
@@ -128,10 +130,10 @@ const factionConfig = {
     rule: 'Each force has a base strength of ½. Spend 1 spice per force to raise it to full strength.',
     leaders: [
       ['Staban Tuek', 5, 'SG-leader-staban.png'],
-      ['Guild Representative', 4, 'SG-leader-guildrep.png'],
       ['Esmar Tuek', 3, 'SG-leader-esmar.png'],
-      ['Master Bewt', 2, 'SG-leader-bewt.png'],
-      ['Soo-Soo Sook', 2, 'SG-leader-sook.png']
+      ['Master Bewt', 3, 'SG-leader-bewt.png'],
+      ['Soo-Soo Sook', 2, 'SG-leader-sook.png'],
+      ['Guild Representative', 1, 'SG-leader-guildrep.png']
     ]
   },
   tleilaxu: {
@@ -140,11 +142,11 @@ const factionConfig = {
     logo: 'TX-logo.png',
     rule: 'Each force has a base strength of ½. Spend 1 spice per force to raise it to full strength.',
     leaders: [
-      ['Hidar Fen Ajidica', 0, 'TX-leader-ajidica.png'],
-      ['Master Blin', 4, 'TX-leader-blin.png'],
-      ['Wykk', 3, 'TX-leader-wykk.png'],
-      ['Zoal', 2, 'TX-leader-zoal.png'],
-      ['Zaaf', 1, 'TX-leader-zaaf.png']
+      ['Zoal', 'X', 'TX-leader-zoal.png', true],
+      ['Hidar Fen Ajidica', 4, 'TX-leader-ajidica.png'],
+      ['Master Zaaf', 3, 'TX-leader-zaaf.png'],
+      ['Wykk', 2, 'TX-leader-wykk.png'],
+      ['Master Blin', 1, 'TX-leader-blin.png']
     ]
   },
   moritani: {
@@ -153,12 +155,12 @@ const factionConfig = {
     logo: 'MO-logo.png',
     rule: 'Each force has a base strength of ½. Spend 1 spice per force to raise it to full strength.',
     leaders: [
-      ['Hiih Resser', 6, 'MO-leader-hiih.png'],
-      ['Vando Terboli', 5, 'MO-leader-vando.png'],
-      ['Trin Kronos', 4, 'MO-leader-trin.png'],
-      ['Lupino Ord', 4, 'MO-leader-lupino.png'],
-      ['Grieu Kronos', 2, 'MO-leader-grieu.png'],
-      ['Duke Vidal', 1, 'MO-leader-vidal.png']
+      ['Duke Prad Vidal', 6, 'MO-leader-vidal.png'],
+      ['Lupino Ord', 5, 'MO-leader-lupino.png'],
+      ['Hiih Resser', 4, 'MO-leader-hiih.png'],
+      ['Grieu Kronos', 4, 'MO-leader-grieu.png'],
+      ['Trin Kronos', 2, 'MO-leader-trin.png'],
+      ['Vando Terboli', 1, 'MO-leader-vando.png']
     ]
   },
   ecaz: {
@@ -167,12 +169,12 @@ const factionConfig = {
     logo: 'EZ-logo.png',
     rule: 'Each force has a base strength of ½. Spend 1 spice per force to raise it to full strength.',
     leaders: [
-      ['Duke Vidal', 6, 'EZ-leader-vidal.png'],
+      ['Duke Prad Vidal', 6, 'EZ-leader-vidal.png'],
       ['Sanya Ecaz', 4, 'EZ-leader-sanya.png'],
-      ['Ilesa Ecaz', 4, 'EZ-leader-ilesa.png'],
-      ['Whitmore Bludd', 3, 'EZ-leader-bludd.png'],
-      ['Narvi', 3, 'EZ-leader-narvi.png'],
-      ['Dinari', 2, 'EZ-leader-dinari.png']
+      ['Whitmore Bludd', 4, 'EZ-leader-bludd.png'],
+      ['Ilesa Ecaz', 3, 'EZ-leader-ilesa.png'],
+      ["R'Rilly Dinari", 3, 'EZ-leader-dinari.png'],
+      ['Bindikk Narvi', 2, 'EZ-leader-narvi.png']
     ]
   }
 };
@@ -181,7 +183,18 @@ const elements = {
   faction: document.getElementById('faction'),
   factionLogo: document.getElementById('factionLogo'),
   factionRule: document.getElementById('factionRule'),
-  factionName: document.getElementById('factionName'),
+  currentFactionName: document.getElementById('currentFactionName'),
+  appLayout: document.getElementById('appLayout'),
+  resetApplication: document.getElementById('resetApplication'),
+  setupTrigger: document.getElementById('openGameSetup'),
+  gameSetup: document.getElementById('gameSetup'),
+  gameSetupGrid: document.getElementById('gameSetupGrid'),
+  gameSetupInstructions: document.getElementById('gameSetupInstructions'),
+  gameSetupNotice: document.getElementById('gameSetupNotice'),
+  gameSetupSummary: document.getElementById('gameSetupSummary'),
+  changeYourFaction: document.getElementById('changeYourFaction'),
+  cancelGameSetup: document.getElementById('cancelGameSetup'),
+  saveGameSetup: document.getElementById('saveGameSetup'),
   forces: document.getElementById('forces'),
   forcesLabel: document.getElementById('forcesLabel'),
   specialField: document.getElementById('specialField'),
@@ -192,14 +205,10 @@ const elements = {
   fremenOpponentField: document.getElementById('fremenOpponentField'),
   fremenOpponent: document.getElementById('fremenOpponent'),
   leaderMenu: document.getElementById('leaderMenu'),
+  variableLeaderField: document.getElementById('variableLeaderField'),
+  variableLeaderStrength: document.getElementById('variableLeaderStrength'),
   weapon: document.getElementById('weapon'),
   defense: document.getElementById('defense'),
-  wheel: document.getElementById('battleWheel'),
-  dialMarks: document.getElementById('dialMarks'),
-  score: document.getElementById('scoreValue'),
-  forceScore: document.getElementById('forceScore'),
-  leaderScore: document.getElementById('leaderScore'),
-  totalScore: document.getElementById('totalScore'),
   status: document.getElementById('battleStatus'),
   log: document.getElementById('battleLog'),
   confirmBtn: document.getElementById('confirmBtn')
@@ -208,6 +217,11 @@ const elements = {
 let selectedLeader = null;
 let leaderView = 'leaders';
 let capturedFactionKey = null;
+let factionsInPlay = new Set();
+let setupDraftFactions = new Set();
+let setupDraftYourFaction = 'atreides';
+let changingYourFaction = false;
+let gameSetupWarning = '';
 
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
@@ -228,38 +242,6 @@ function formatScore(value) {
   return whole === 0 ? '½' : whole + '½';
 }
 
-function renderForceWindow(value) {
-  const lowerValue = Math.floor(value);
-  const isHalfStep = !Number.isInteger(value);
-
-  elements.score.replaceChildren();
-  elements.score.classList.toggle('force-window__value--half', isHalfStep);
-  elements.score.setAttribute('aria-label', 'Dialed strength ' + formatScore(value));
-
-  const lower = document.createElement('span');
-  lower.textContent = String(lowerValue);
-  elements.score.appendChild(lower);
-
-  if (isHalfStep) {
-    const upper = document.createElement('span');
-    upper.textContent = String(lowerValue + 1);
-    elements.score.appendChild(upper);
-  }
-}
-
-function buildDialMarks() {
-  const fragment = document.createDocumentFragment();
-
-  for (let value = 0; value <= 20; value += 2) {
-    const mark = document.createElement('span');
-    mark.textContent = value;
-    mark.style.setProperty('--mark-angle', value * 13 - 130 + 'deg');
-    fragment.appendChild(mark);
-  }
-
-  elements.dialMarks.appendChild(fragment);
-}
-
 function renderList(items) {
   elements.log.replaceChildren();
 
@@ -270,8 +252,106 @@ function renderList(items) {
   });
 }
 
+function setFactionSelectionMode(hasFaction) {
+  elements.factionLogo.hidden = !hasFaction;
+  elements.currentFactionName.hidden = !hasFaction;
+  elements.faction.hidden = hasFaction;
+  elements.faction.setAttribute('aria-hidden', String(hasFaction));
+
+  if (hasFaction) {
+    elements.faction.tabIndex = -1;
+  } else {
+    elements.faction.removeAttribute('tabindex');
+  }
+
+  elements.setupTrigger.disabled = !hasFaction;
+  elements.confirmBtn.disabled = !hasFaction;
+  elements.forces.disabled = !hasFaction;
+  elements.specialForces.disabled = !hasFaction;
+  elements.spice.disabled = !hasFaction;
+  elements.fremenOpponent.disabled = !hasFaction;
+  elements.variableLeaderStrength.disabled = !hasFaction;
+  document.querySelectorAll('.stepper-btn').forEach((button) => {
+    button.disabled = !hasFaction;
+  });
+}
+
+function resetApplication({ clearStorage = true } = {}) {
+  factionsInPlay = new Set();
+  setupDraftFactions = new Set();
+  setupDraftYourFaction = '';
+  changingYourFaction = false;
+  gameSetupWarning = '';
+  selectedLeader = null;
+  leaderView = 'leaders';
+  capturedFactionKey = null;
+
+  elements.gameSetup.hidden = true;
+  elements.appLayout.hidden = false;
+  elements.setupTrigger.hidden = false;
+  elements.faction.value = '';
+  elements.factionLogo.alt = '';
+  elements.currentFactionName.textContent = '';
+  elements.factionRule.textContent = 'Choose your faction to begin.';
+  elements.forcesLabel.textContent = 'Forces';
+  elements.forces.max = 20;
+  elements.forces.value = 0;
+  elements.specialForces.value = 0;
+  elements.spice.value = 0;
+  elements.fremenOpponent.checked = false;
+  elements.specialField.hidden = true;
+  elements.spiceField.hidden = true;
+  elements.fremenOpponentField.hidden = true;
+  elements.leaderMenu.replaceChildren();
+  elements.variableLeaderField.hidden = true;
+  elements.variableLeaderStrength.value = 0;
+  elements.weapon.value = 'none';
+  elements.defense.value = 'none';
+  updateEquipmentAvailability();
+  setFactionSelectionMode(false);
+
+  elements.status.className = 'battle-status battle-status--neutral';
+  const statusTitle = document.createElement('strong');
+  statusTitle.textContent = 'Choose a faction';
+  const statusDetail = document.createElement('span');
+  statusDetail.textContent = 'Select your faction before preparing a battle plan.';
+  elements.status.replaceChildren(statusTitle, statusDetail);
+  renderList(['No factions selected.']);
+
+  if (clearStorage) {
+    try {
+      localStorage.removeItem(SELECTED_FACTION_STORAGE_KEY);
+      localStorage.setItem(FACTIONS_IN_PLAY_STORAGE_KEY, '[]');
+    } catch {
+      // The calculator still works when browser storage is unavailable.
+    }
+  }
+}
+function updateEquipmentAvailability() {
+  const canSelectEquipment = Boolean(selectedLeader && selectedLeader.name !== 'No leader');
+
+  elements.weapon.disabled = !canSelectEquipment;
+  elements.defense.disabled = !canSelectEquipment;
+
+  if (!canSelectEquipment) {
+    elements.weapon.value = 'none';
+    elements.defense.value = 'none';
+  }
+}
+
+function updateVariableLeaderField() {
+  const usesVariableStrength = Boolean(selectedLeader?.variableStrength);
+  elements.variableLeaderField.hidden = !usesVariableStrength;
+
+  if (!usesVariableStrength) {
+    elements.variableLeaderStrength.value = 0;
+  }
+}
+
 function selectLeader(leader) {
   selectedLeader = leader;
+  updateEquipmentAvailability();
+  updateVariableLeaderField();
   buildLeaderMenu();
   calculatePlan();
 }
@@ -315,8 +395,9 @@ function buildLeaderMenu() {
     option.type = 'button';
     option.className = 'leader-option leader-option--portrait circularize';
     option.setAttribute('role', 'option');
-    option.setAttribute('aria-label', leader.name + ', strength ' + leader.strength);
-    option.title = leader.name + ' · Strength ' + leader.strength;
+    const displayedStrength = leader.variableStrength ? 'X' : leader.strength;
+    option.setAttribute('aria-label', leader.name + ', strength ' + displayedStrength);
+    option.title = leader.name + ' · Strength ' + displayedStrength;
     option.setAttribute('aria-selected', String(isSelected(leader)));
 
     const image = document.createElement('img');
@@ -331,10 +412,11 @@ function buildLeaderMenu() {
 
   function showLeaderPortraits(sourceKey, captured = false) {
     const sourceFaction = factionConfig[sourceKey];
-    const leaders = sourceFaction.leaders.map(([name, strength, image]) => ({
+    const leaders = sourceFaction.leaders.map(([name, strength, image, variableStrength = false]) => ({
       name,
       strength,
       image,
+      variableStrength,
       capturedFrom: captured ? sourceKey : null
     }));
 
@@ -361,7 +443,7 @@ function buildLeaderMenu() {
     factionGrid.className = 'captured-factions';
 
     Object.entries(factionConfig)
-      .filter(([key]) => key !== 'harkonnen')
+      .filter(([key]) => key !== 'harkonnen' && factionsInPlay.has(key))
       .forEach(([key, candidate]) => {
         const button = document.createElement('button');
         button.type = 'button';
@@ -447,14 +529,108 @@ function buildLeaderMenu() {
   showLeaderPortraits(factionKey);
 }
 
+function renderGameSetup() {
+  elements.gameSetupGrid.replaceChildren();
+
+  FACTION_ORDER.forEach((key) => {
+    const faction = factionConfig[key];
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'game-setup-faction';
+    button.dataset.active = String(setupDraftFactions.has(key));
+    button.dataset.you = String(setupDraftYourFaction === key);
+    button.setAttribute('aria-pressed', String(setupDraftFactions.has(key)));
+    button.setAttribute('aria-label', faction.name + (setupDraftYourFaction === key ? ', your faction' : setupDraftFactions.has(key) ? ', in play' : ', not in play'));
+
+    const image = document.createElement('img');
+    image.className = 'game-setup-logo';
+    image.src = 'img/' + faction.logo;
+    image.alt = '';
+
+    const name = document.createElement('span');
+    name.className = 'game-setup-name';
+    name.textContent = faction.name;
+
+    button.append(image, name);
+    button.addEventListener('click', () => {
+      if (changingYourFaction) {
+        setupDraftYourFaction = key;
+        setupDraftFactions.add(key);
+        changingYourFaction = false;
+      } else if (key === setupDraftYourFaction) {
+        changingYourFaction = true;
+      } else if (setupDraftFactions.has(key)) {
+        setupDraftFactions.delete(key);
+      } else {
+        setupDraftFactions.add(key);
+      }
+
+      gameSetupWarning = '';
+      renderGameSetup();
+    });
+
+    elements.gameSetupGrid.appendChild(button);
+  });
+
+  elements.gameSetupInstructions.textContent = changingYourFaction
+    ? 'Choose your faction. Selecting it also adds it to the current game.'
+    : 'Select the factions taking part in this game.';
+  elements.changeYourFaction.textContent = changingYourFaction ? 'Cancel' : 'Change your faction';
+  elements.gameSetupSummary.textContent = 'You are playing ' + factionConfig[setupDraftYourFaction].name + ' · ' + setupDraftFactions.size + ' factions selected';
+  elements.gameSetupNotice.textContent = gameSetupWarning || (setupDraftFactions.size <= 6 ? 6 - setupDraftFactions.size + ' places remaining' : setupDraftFactions.size + ' factions selected');
+  elements.gameSetupNotice.dataset.warning = String(Boolean(gameSetupWarning));
+}
+
+function showGameSetup() {
+  if (!factionConfig[elements.faction.value]) return;
+
+  setupDraftFactions = new Set(factionsInPlay);
+  setupDraftYourFaction = elements.faction.value;
+  changingYourFaction = false;
+  gameSetupWarning = '';
+  elements.appLayout.hidden = true;
+  elements.gameSetup.hidden = false;
+  elements.setupTrigger.hidden = true;
+  renderGameSetup();
+}
+
+function hideGameSetup() {
+  elements.gameSetup.hidden = true;
+  elements.appLayout.hidden = false;
+  elements.setupTrigger.hidden = false;
+}
+
+function commitGameSetup() {
+  if (setupDraftFactions.size > 6) {
+    gameSetupWarning = 'Choose no more than six factions before continuing.';
+    renderGameSetup();
+    return;
+  }
+
+  factionsInPlay = new Set(setupDraftFactions);
+  elements.faction.value = setupDraftYourFaction;
+
+  try {
+    localStorage.setItem(SELECTED_FACTION_STORAGE_KEY, setupDraftYourFaction);
+    localStorage.setItem(FACTIONS_IN_PLAY_STORAGE_KEY, JSON.stringify([...factionsInPlay]));
+  } catch {
+    // The calculator still works when browser storage is unavailable.
+  }
+
+  hideGameSetup();
+  updateFactionFields();
+}
 function updateFactionFields() {
   const faction = factionConfig[elements.faction.value];
+  if (!faction) return;
+
+  setFactionSelectionMode(true);
   const hasSpecialForces = Boolean(faction.special);
   const usesSpice = !faction.fullStrength && !faction.fixedHalfStrength;
 
   elements.factionLogo.src = 'img/' + faction.logo;
   elements.factionLogo.alt = faction.name + ' emblem';
-  elements.factionName.textContent = faction.name.toUpperCase();
+  elements.currentFactionName.textContent = faction.name;
   elements.factionRule.textContent = faction.rule;
   elements.forcesLabel.textContent = faction.regularLabel || (hasSpecialForces ? 'Ordinary forces' : 'Forces');
   elements.forces.max = faction.forceMax || 20;
@@ -476,6 +652,8 @@ function updateFactionFields() {
 
   elements.fremenOpponent.checked = false;
   selectedLeader = null;
+  updateEquipmentAvailability();
+  updateVariableLeaderField();
   leaderView = 'leaders';
   capturedFactionKey = null;
   buildLeaderMenu();
@@ -523,9 +701,12 @@ function equipmentStatus() {
 
 function calculatePlan() {
   const faction = factionConfig[elements.faction.value];
+  if (!faction) return;
   const forces = numericValue(elements.forces);
   const specialForces = numericValue(elements.specialForces);
-  const leaderStrength = selectedLeader?.strength || 0;
+  const leaderStrength = selectedLeader?.variableStrength
+    ? numericValue(elements.variableLeaderStrength)
+    : selectedLeader?.strength || 0;
   let spice = numericValue(elements.spice);
   let ordinaryStrength;
 
@@ -549,14 +730,8 @@ function calculatePlan() {
   const specialStrength = specialForces * specialMultiplier;
   const forceStrength = ordinaryStrength + specialStrength;
   const total = forceStrength + leaderStrength;
-  const rotation = clamp(forceStrength, 0, 20) * 13 - 130;
   const status = equipmentStatus();
 
-  elements.wheel.style.setProperty('--wheel-angle', rotation + 'deg');
-  renderForceWindow(forceStrength);
-  elements.forceScore.textContent = formatScore(forceStrength);
-  elements.leaderScore.textContent = formatScore(leaderStrength);
-  elements.totalScore.textContent = formatScore(total);
   elements.status.className = 'battle-status battle-status--' + status.type;
   elements.status.replaceChildren();
 
@@ -599,15 +774,22 @@ document.querySelectorAll('.stepper-btn').forEach((button) => {
   elements.spice,
   elements.weapon,
   elements.defense,
-  elements.fremenOpponent
+  elements.fremenOpponent,
+  elements.variableLeaderStrength
 ].forEach((control) => {
   control.addEventListener('input', calculatePlan);
   control.addEventListener('change', calculatePlan);
 });
 
 elements.faction.addEventListener('change', () => {
+  const factionKey = elements.faction.value;
+  if (!factionConfig[factionKey]) return;
+
+  factionsInPlay.add(factionKey);
+
   try {
-    localStorage.setItem(SELECTED_FACTION_STORAGE_KEY, elements.faction.value);
+    localStorage.setItem(SELECTED_FACTION_STORAGE_KEY, factionKey);
+    localStorage.setItem(FACTIONS_IN_PLAY_STORAGE_KEY, JSON.stringify([...factionsInPlay]));
   } catch {
     // The calculator still works when browser storage is unavailable.
   }
@@ -615,25 +797,45 @@ elements.faction.addEventListener('change', () => {
   updateFactionFields();
 });
 
+elements.resetApplication.addEventListener('click', () => resetApplication());
+elements.resetApplication.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault();
+    resetApplication();
+  }
+});
+elements.setupTrigger.addEventListener('click', showGameSetup);
+elements.cancelGameSetup.addEventListener('click', hideGameSetup);
+elements.saveGameSetup.addEventListener('click', commitGameSetup);
+elements.changeYourFaction.addEventListener('click', () => {
+  changingYourFaction = !changingYourFaction;
+  gameSetupWarning = '';
+  renderGameSetup();
+});
 elements.confirmBtn.addEventListener('click', () => {
-  elements.wheel.classList.remove('is-confirmed');
-  void elements.wheel.offsetWidth;
-  elements.wheel.classList.add('is-confirmed');
   elements.confirmBtn.textContent = 'Battle plan confirmed';
   setTimeout(() => {
     elements.confirmBtn.textContent = 'Confirm battle plan';
   }, 1400);
 });
 
-buildDialMarks();
-
 try {
   const savedFaction = localStorage.getItem(SELECTED_FACTION_STORAGE_KEY);
   if (savedFaction && factionConfig[savedFaction]) {
     elements.faction.value = savedFaction;
   }
+
+  const savedFactionsInPlay = JSON.parse(localStorage.getItem(FACTIONS_IN_PLAY_STORAGE_KEY) || '[]');
+  if (Array.isArray(savedFactionsInPlay)) {
+    factionsInPlay = new Set(savedFactionsInPlay.filter((key) => Boolean(factionConfig[key])));
+  }
 } catch {
-  // Use the default faction when browser storage is unavailable.
+  // Use the default setup when browser storage is unavailable.
 }
 
-updateFactionFields();
+if (factionConfig[elements.faction.value]) {
+  factionsInPlay.add(elements.faction.value);
+  updateFactionFields();
+} else {
+  resetApplication({ clearStorage: false });
+}

@@ -63,6 +63,15 @@ input {
   text-shadow: 1px 1px 0 #172a40;
 }
 
+.rulebook-title[role="button"] {
+  cursor: pointer;
+}
+
+.rulebook-title[role="button"]:focus-visible {
+  outline: 2px solid var(--sand-heading);
+  outline-offset: -4px;
+}
+
 .rulebook-title > img {
   display: block;
   width: auto;
@@ -168,6 +177,16 @@ select,
 
 select {
   cursor: pointer;
+}
+
+select:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 
 select:hover,
@@ -474,6 +493,10 @@ input[type="range"] {
   align-items: center;
 }
 
+.faction-logo[hidden] + .field {
+  grid-column: 1 / -1;
+}
+
 .faction-logo {
   width: 3.5rem;
   height: 3.5rem;
@@ -708,6 +731,16 @@ input[type="range"] {
   aspect-ratio: 1;
   border-radius: 50%;
   object-fit: cover;
+}
+
+.variable-leader-field {
+  margin-top: 0.85rem;
+}
+
+.variable-leader-field small {
+  color: #4a4335;
+  font-size: 0.78rem;
+  line-height: 1.35;
 }
 
 .leader-menu.leader-grid {
@@ -992,4 +1025,190 @@ input[type="range"] {
   margin-top: 0.18rem;
   color: #263f5d;
   font-size: clamp(0.48rem, 1.4vw, 0.62rem);
+}
+/* Integrated game setup selector and two-panel layout. */
+.layout {
+  grid-template-columns: repeat(2, minmax(16rem, 28rem));
+  justify-content: center;
+}
+
+.report-panel {
+  grid-column: auto;
+}
+
+#rulebook-header { position: relative; }
+
+.setup-trigger {
+  position: absolute;
+  top: 0.7rem;
+  right: 0.65rem;
+  z-index: 2;
+  min-height: 2.25rem;
+  padding: 0.35rem 0.65rem;
+  border: 1px solid rgb(255 255 255 / 65%);
+  border-radius: 0.25rem;
+  background: rgb(255 255 255 / 10%);
+  color: #fff;
+  cursor: pointer;
+  font-family: "Fira Sans", sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.current-faction-name {
+  color: var(--blue-heading);
+  font-family: "Fira Sans", sans-serif;
+  font-size: 1.05rem;
+}
+
+.game-setup-panel {
+  width: min(31rem, 100%);
+  margin: 1.25rem auto 2rem;
+}
+
+.game-setup-body { padding: 1rem 0.8rem 1.5rem; }
+
+.game-setup-instructions {
+  margin: 0 0 1rem;
+  padding: 0.65rem 0.75rem;
+  border-left: 3px solid var(--blue-callout);
+  background: var(--sand-light);
+  font-family: "Balthazar", serif;
+  line-height: 1.3;
+}
+
+.game-setup-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.8rem 0.7rem;
+}
+
+.game-setup-faction {
+  position: relative;
+  appearance: none;
+  display: grid;
+  grid-template-rows: 5.25rem 1.7rem;
+  justify-items: center;
+  align-items: center;
+  justify-self: center;
+  width: 100%;
+  max-width: 7rem;
+  padding: 0.65rem 0.35rem 0.45rem;
+  border: 2px solid transparent;
+  border-radius: 0.55rem;
+  background: transparent;
+  color: #625e53;
+  cursor: pointer;
+  font-family: "Fira Sans", sans-serif;
+  font-size: 0.66rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.game-setup-logo {
+  display: block;
+  width: 5.25rem;
+  height: 5.25rem;
+  border-radius: 50%;
+  object-fit: contain;
+  filter: grayscale(1) saturate(0);
+  opacity: 0.34;
+}
+
+.game-setup-name {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 1.7rem;
+  line-height: 1.05;
+  text-align: center;
+}
+
+.game-setup-faction[data-active="true"] { color: var(--blue-heading); }
+.game-setup-faction[data-active="true"] .game-setup-logo { filter: none; opacity: 1; }
+
+.game-setup-faction[data-you="true"] {
+  border-color: var(--blue-heading);
+  background: rgb(240 227 184 / 60%);
+  color: var(--text-dark);
+  box-shadow: inset 0 0 0 2px var(--sand-heading);
+}
+
+.game-setup-faction[data-you="true"]::after {
+  position: absolute;
+  top: -0.45rem;
+  right: -0.25rem;
+  padding: 0.18rem 0.42rem;
+  border: 2px solid #e9e3d0;
+  border-radius: 999px;
+  background: var(--blue-heading);
+  color: #fff;
+  content: "YOU";
+  font-size: 0.58rem;
+}
+
+.game-setup-notice {
+  min-height: 2.15rem;
+  margin: 0.75rem 0 0;
+  padding: 0.5rem 0.65rem;
+  border-left: 3px solid transparent;
+  color: #625e53;
+  font-size: 0.75rem;
+}
+
+.game-setup-notice[data-warning="true"] {
+  border-left-color: #946600;
+  background: #fff3cd;
+  color: #664d03;
+}
+
+.game-setup-change {
+  display: block;
+  margin: 0.3rem auto 0;
+  padding: 0.55rem 0.8rem;
+  border: 1px solid var(--blue-heading);
+  border-radius: 0.25rem;
+  background: var(--blue-heading);
+  color: #fff;
+  cursor: pointer;
+  font-size: 0.78rem;
+}
+
+.game-setup-summary {
+  margin: 0.8rem 0 0;
+  color: #58544b;
+  font-size: 0.72rem;
+  text-align: center;
+}
+
+.game-setup-actions {
+  position: sticky;
+  bottom: 0;
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 0.55rem;
+  margin: 1rem -0.8rem -1.5rem;
+  padding: 0.75rem 0.8rem calc(0.75rem + env(safe-area-inset-bottom));
+  border-top: 1px solid #c7bea7;
+  background: rgb(233 227 208 / 96%);
+}
+
+.game-setup-actions button {
+  min-height: 2.65rem;
+  border: 1px solid #b7b0a1;
+  border-radius: 0.25rem;
+  background: #f5f4f0;
+  color: #333;
+  cursor: pointer;
+}
+
+.game-setup-actions .game-setup-done {
+  border-color: var(--blue-heading);
+  background: var(--blue-heading);
+  color: #fff;
+}
+
+@media (max-width: 50rem) {
+  .layout { grid-template-columns: 1fr; }
 }
