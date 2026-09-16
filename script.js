@@ -185,6 +185,32 @@ const elements = {
   factionRule: document.getElementById('factionRule'),
   currentFactionName: document.getElementById('currentFactionName'),
   appLayout: document.getElementById('appLayout'),
+  battlePlanResult: document.getElementById('battlePlanResult'),
+  resultWheel: document.getElementById('resultWheel'),
+  resultFactionName: document.getElementById('resultFactionName'),
+  resultForceStrength: document.getElementById('resultForceStrength'),
+  resultLeaderSlot: document.getElementById('resultLeaderSlot'),
+  resultLeaderImage: document.getElementById('resultLeaderImage'),
+  resultLeaderFallback: document.getElementById('resultLeaderFallback'),
+  resultKwisatzImage: document.getElementById('resultKwisatzImage'),
+  resultLeaderName: document.getElementById('resultLeaderName'),
+  resultWeaponCard: document.getElementById('resultWeaponCard'),
+  resultWeaponImage: document.getElementById('resultWeaponImage'),
+  resultWeaponName: document.getElementById('resultWeaponName'),
+  resultDefenseCard: document.getElementById('resultDefenseCard'),
+  resultDefenseImage: document.getElementById('resultDefenseImage'),
+  resultDefenseName: document.getElementById('resultDefenseName'),
+  leaderKilledField: document.getElementById('leaderKilledField'),
+  resultLeaderKilled: document.getElementById('resultLeaderKilled'),
+  resultForces: document.getElementById('resultForces'),
+  resultLeader: document.getElementById('resultLeader'),
+  resultTotal: document.getElementById('resultTotal'),
+  resultOutcome: document.getElementById('resultOutcome'),
+  resultBreakdown: document.getElementById('resultBreakdown'),
+  backToPlan: document.getElementById('backToPlan'),
+  previewForces: document.getElementById('previewForces'),
+  previewLeader: document.getElementById('previewLeader'),
+  previewTotal: document.getElementById('previewTotal'),
   resetApplication: document.getElementById('resetApplication'),
   setupTrigger: document.getElementById('openGameSetup'),
   gameSetup: document.getElementById('gameSetup'),
@@ -205,6 +231,8 @@ const elements = {
   fremenOpponentField: document.getElementById('fremenOpponentField'),
   fremenOpponent: document.getElementById('fremenOpponent'),
   leaderMenu: document.getElementById('leaderMenu'),
+  kwisatzField: document.getElementById('kwisatzField'),
+  kwisatzHaderach: document.getElementById('kwisatzHaderach'),
   variableLeaderField: document.getElementById('variableLeaderField'),
   variableLeaderStrength: document.getElementById('variableLeaderStrength'),
   weapon: document.getElementById('weapon'),
@@ -270,6 +298,7 @@ function setFactionSelectionMode(hasFaction) {
   elements.specialForces.disabled = !hasFaction;
   elements.spice.disabled = !hasFaction;
   elements.fremenOpponent.disabled = !hasFaction;
+  elements.kwisatzHaderach.disabled = !hasFaction;
   elements.variableLeaderStrength.disabled = !hasFaction;
   document.querySelectorAll('.stepper-btn').forEach((button) => {
     button.disabled = !hasFaction;
@@ -287,6 +316,7 @@ function resetApplication({ clearStorage = true } = {}) {
   capturedFactionKey = null;
 
   elements.gameSetup.hidden = true;
+  elements.battlePlanResult.hidden = true;
   elements.appLayout.hidden = false;
   elements.setupTrigger.hidden = false;
   elements.faction.value = '';
@@ -305,6 +335,9 @@ function resetApplication({ clearStorage = true } = {}) {
   elements.leaderMenu.replaceChildren();
   elements.variableLeaderField.hidden = true;
   elements.variableLeaderStrength.value = 0;
+  elements.kwisatzField.hidden = true;
+  elements.kwisatzHaderach.checked = false;
+  elements.resultLeaderKilled.checked = false;
   elements.weapon.value = 'none';
   elements.defense.value = 'none';
   updateEquipmentAvailability();
@@ -348,10 +381,25 @@ function updateVariableLeaderField() {
   }
 }
 
+function updateKwisatzAvailability() {
+  const eligible = Boolean(
+    elements.faction.value === 'atreides' &&
+    selectedLeader &&
+    selectedLeader.name !== 'No leader'
+  );
+
+  elements.kwisatzField.hidden = !eligible;
+  if (!eligible) {
+    elements.kwisatzHaderach.checked = false;
+  }
+}
+
 function selectLeader(leader) {
   selectedLeader = leader;
+  elements.resultLeaderKilled.checked = false;
   updateEquipmentAvailability();
   updateVariableLeaderField();
+  updateKwisatzAvailability();
   buildLeaderMenu();
   calculatePlan();
 }
@@ -654,6 +702,7 @@ function updateFactionFields() {
   selectedLeader = null;
   updateEquipmentAvailability();
   updateVariableLeaderField();
+  updateKwisatzAvailability();
   leaderView = 'leaders';
   capturedFactionKey = null;
   buildLeaderMenu();
@@ -699,14 +748,23 @@ function equipmentStatus() {
   };
 }
 
-function calculatePlan() {
+function getBattlePlanValues() {
   const faction = factionConfig[elements.faction.value];
-  if (!faction) return;
+  if (!faction) return null;
+
   const forces = numericValue(elements.forces);
   const specialForces = numericValue(elements.specialForces);
-  const leaderStrength = selectedLeader?.variableStrength
+  const baseLeaderStrength = selectedLeader?.variableStrength
     ? numericValue(elements.variableLeaderStrength)
     : selectedLeader?.strength || 0;
+  const usesKwisatz = Boolean(
+    elements.faction.value === 'atreides' &&
+    selectedLeader &&
+    selectedLeader.name !== 'No leader' &&
+    elements.kwisatzHaderach.checked
+  );
+  const kwisatzBonus = usesKwisatz ? 2 : 0;
+  const leaderStrength = baseLeaderStrength + kwisatzBonus;
   let spice = numericValue(elements.spice);
   let ordinaryStrength;
 
@@ -729,8 +787,37 @@ function calculatePlan() {
 
   const specialStrength = specialForces * specialMultiplier;
   const forceStrength = ordinaryStrength + specialStrength;
-  const total = forceStrength + leaderStrength;
+
+  return {
+    faction,
+    forces,
+    specialForces,
+    spice,
+    leaderStrength,
+    baseLeaderStrength,
+    usesKwisatz,
+    kwisatzBonus,
+    baseForceStrength: faction.fullStrength ? forces : forces / 2,
+    spiceStrength: !faction.fullStrength && !faction.fixedHalfStrength ? spice / 2 : 0,
+    specialMultiplier,
+    specialStrength,
+    forceStrength,
+    total: forceStrength + leaderStrength
+  };
+}
+
+function calculatePlan() {
+  const plan = getBattlePlanValues();
+  if (!plan) return;
+
+  const { faction, forces, specialForces, spice, leaderStrength, forceStrength, total } = plan;
   const status = equipmentStatus();
+  const variableLeader = Boolean(selectedLeader?.variableStrength);
+  elements.previewForces.textContent = formatScore(forceStrength);
+  elements.previewLeader.textContent = variableLeader ? 'X' : formatScore(leaderStrength);
+  elements.previewTotal.textContent = variableLeader
+    ? formatScore(forceStrength) + ' + X'
+    : formatScore(total);
 
   elements.status.className = 'battle-status battle-status--' + status.type;
   elements.status.replaceChildren();
@@ -757,8 +844,152 @@ function calculatePlan() {
     supportText,
     'Dialed strength: ' + formatScore(forceStrength) + ' + leader ' + formatScore(leaderStrength) + ' = ' + formatScore(total) + '.'
   ]);
+
+  if (!elements.battlePlanResult.hidden) {
+    renderBattlePlanResult(plan);
+  }
 }
 
+function renderResultCard(card, image, name, value, labels) {
+  const isEmpty = value === 'none';
+  card.dataset.empty = String(isEmpty);
+  name.textContent = labels[value];
+  image.hidden = isEmpty;
+
+  if (!isEmpty) {
+    image.src = value === 'worthless'
+      ? 'img/card-worthless.png'
+      : 'img/card-treachery-back.png';
+    image.alt = labels[value];
+  }
+}
+
+function renderStrengthBreakdown(plan, effectiveLeaderStrength, leaderKilled) {
+  elements.resultBreakdown.replaceChildren();
+
+  function addRow(label, value, emphasis = false) {
+    const row = document.createElement('li');
+    if (emphasis) row.classList.add('result-breakdown__total');
+    const term = document.createElement('span');
+    term.textContent = label;
+    const calculation = document.createElement('strong');
+    calculation.textContent = value;
+    row.append(term, calculation);
+    elements.resultBreakdown.appendChild(row);
+  }
+
+  const regularLabel = plan.faction.regularLabel || (plan.faction.special ? 'Ordinary forces' : 'Forces');
+  const regularMultiplier = plan.faction.fullStrength ? '1' : '½';
+  addRow(regularLabel, plan.forces + ' × ' + regularMultiplier + ' = ' + formatScore(plan.baseForceStrength));
+
+  if (plan.faction.fullStrength) {
+    addRow('Spice support', 'Not required');
+  } else if (plan.faction.fixedHalfStrength) {
+    addRow('Spice support', 'Not available');
+  } else {
+    addRow('Spice support', plan.spice + ' × ½ = +' + formatScore(plan.spiceStrength));
+  }
+
+  if (plan.faction.special) {
+    addRow(
+      plan.faction.special,
+      plan.specialForces + ' × ' + plan.specialMultiplier + ' = +' + formatScore(plan.specialStrength)
+    );
+  }
+
+  addRow('Dialed strength', formatScore(plan.forceStrength), true);
+
+  const leaderName = selectedLeader?.name || 'No leader';
+  const leaderValue = leaderKilled
+    ? formatScore(plan.baseLeaderStrength) + ' → 0 (killed)'
+    : '+' + formatScore(plan.baseLeaderStrength);
+  addRow(leaderName, leaderValue);
+
+  if (plan.usesKwisatz) {
+    addRow(
+      'Kwisatz Haderach',
+      leaderKilled ? '+2 → 0 (leader killed)' : '+2'
+    );
+  }
+  addRow(
+    'Final total',
+    formatScore(plan.forceStrength) + ' + ' + formatScore(effectiveLeaderStrength) + ' = ' + formatScore(plan.forceStrength + effectiveLeaderStrength),
+    true
+  );
+}
+
+function renderBattlePlanResult(plan = getBattlePlanValues()) {
+  if (!plan) return;
+
+  const hasLeaderToken = Boolean(selectedLeader?.image);
+  const hasPlayedHero = Boolean(selectedLeader && selectedLeader.name !== 'No leader');
+  const leaderKilled = hasPlayedHero && elements.resultLeaderKilled.checked;
+  const effectiveLeaderStrength = leaderKilled ? 0 : plan.leaderStrength;
+  const finalTotal = plan.forceStrength + effectiveLeaderStrength;
+
+  elements.resultFactionName.textContent = plan.faction.name.toUpperCase();
+  elements.resultForceStrength.textContent = formatScore(plan.forceStrength);
+  elements.resultForces.textContent = formatScore(plan.forceStrength);
+  elements.resultLeader.textContent = formatScore(effectiveLeaderStrength);
+  elements.resultTotal.textContent = formatScore(finalTotal);
+  renderStrengthBreakdown(plan, effectiveLeaderStrength, leaderKilled);
+  elements.resultLeaderName.textContent = selectedLeader?.name || 'No leader';
+  elements.resultLeaderSlot.dataset.killed = String(leaderKilled);
+  elements.resultKwisatzImage.hidden = !plan.usesKwisatz;
+  elements.resultKwisatzImage.dataset.killed = String(leaderKilled);
+  elements.leaderKilledField.hidden = !hasPlayedHero;
+
+  if (!hasPlayedHero) {
+    elements.resultLeaderKilled.checked = false;
+  }
+
+  if (selectedLeader?.image) {
+    elements.resultLeaderImage.src = 'img/' + selectedLeader.image;
+    elements.resultLeaderImage.alt = selectedLeader.name;
+    elements.resultLeaderImage.hidden = false;
+    elements.resultLeaderFallback.hidden = true;
+  } else {
+    elements.resultLeaderImage.hidden = true;
+    elements.resultLeaderFallback.hidden = false;
+    elements.resultLeaderFallback.textContent = selectedLeader?.name === 'Cheap Hero' ? 'H' : '—';
+  }
+
+  renderResultCard(elements.resultWeaponCard, elements.resultWeaponImage, elements.resultWeaponName, elements.weapon.value, {
+    none: 'No weapon', projectile: 'Projectile weapon', poison: 'Poison weapon', lasgun: 'Lasgun', worthless: 'Worthless card'
+  });
+  renderResultCard(elements.resultDefenseCard, elements.resultDefenseImage, elements.resultDefenseName, elements.defense.value, {
+    none: 'No defense', shield: 'Shield', snooper: 'Snooper', worthless: 'Worthless card'
+  });
+
+  updateVariableLeaderField();
+  elements.resultOutcome.className = leaderKilled
+    ? 'battle-status battle-status--danger'
+    : 'battle-status battle-status--safe';
+  elements.resultOutcome.textContent = leaderKilled
+    ? 'The leader was killed and contributes no strength. Final total: ' + formatScore(finalTotal) + '.'
+    : 'The leader contributes ' + formatScore(effectiveLeaderStrength) + '. Final total: ' + formatScore(finalTotal) + '.';
+  elements.resultWheel.setAttribute('aria-label', 'Battle wheel showing force strength ' + formatScore(plan.forceStrength));
+}
+
+function showBattlePlanResult() {
+  const plan = getBattlePlanValues();
+  if (!plan) return;
+
+  elements.appLayout.hidden = true;
+  elements.gameSetup.hidden = true;
+  elements.battlePlanResult.hidden = false;
+  elements.setupTrigger.hidden = true;
+  renderBattlePlanResult(plan);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function hideBattlePlanResult() {
+  elements.battlePlanResult.hidden = true;
+  elements.appLayout.hidden = false;
+  elements.setupTrigger.hidden = false;
+  calculatePlan();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 document.querySelectorAll('.stepper-btn').forEach((button) => {
   button.addEventListener('click', () => {
     const input = document.getElementById(button.dataset.target);
@@ -775,6 +1006,7 @@ document.querySelectorAll('.stepper-btn').forEach((button) => {
   elements.weapon,
   elements.defense,
   elements.fremenOpponent,
+  elements.kwisatzHaderach,
   elements.variableLeaderStrength
 ].forEach((control) => {
   control.addEventListener('input', calculatePlan);
@@ -812,12 +1044,9 @@ elements.changeYourFaction.addEventListener('click', () => {
   gameSetupWarning = '';
   renderGameSetup();
 });
-elements.confirmBtn.addEventListener('click', () => {
-  elements.confirmBtn.textContent = 'Battle plan confirmed';
-  setTimeout(() => {
-    elements.confirmBtn.textContent = 'Confirm battle plan';
-  }, 1400);
-});
+elements.confirmBtn.addEventListener('click', showBattlePlanResult);
+elements.backToPlan.addEventListener('click', hideBattlePlanResult);
+elements.resultLeaderKilled.addEventListener('change', () => renderBattlePlanResult());
 
 try {
   const savedFaction = localStorage.getItem(SELECTED_FACTION_STORAGE_KEY);

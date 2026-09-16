@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Balthazar&family=Fira+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css?v=20260916-leader-values" />
+    <link rel="stylesheet" href="styles.css?v=20260916-kwisatz" />
   </head>
   <body>
     <div class="app-shell">
@@ -84,21 +84,21 @@
             <div class="field leader-field">
               <span class="field-label">Leader or Cheap Hero</span>
               <div id="leaderMenu" class="leader-menu leader-grid" role="listbox" aria-label="Choose a leader"></div>
-              <div id="variableLeaderField" class="field variable-leader-field" hidden>
-                <label for="variableLeaderStrength">Opponent leader strength</label>
-                <div class="stepper">
-                  <button type="button" class="stepper-btn" data-target="variableLeaderStrength" data-step="-1" aria-label="Reduce opponent leader strength by one">−</button>
-                  <input id="variableLeaderStrength" type="number" min="0" max="7" value="0" inputmode="numeric" />
-                  <button type="button" class="stepper-btn" data-target="variableLeaderStrength" data-step="1" aria-label="Increase opponent leader strength by one">+</button>
-                </div>
-                <small>Zoal matches the printed strength of the opposing leader; use 0 against a Cheap Hero.</small>
-              </div>
+              <label id="kwisatzField" class="kwisatz-option" hidden>
+                <input id="kwisatzHaderach" type="checkbox" />
+                <img src="img/token-kwisatz-haderach.png" alt="" />
+                <span>
+                  <strong>Kwisatz Haderach</strong>
+                  <small>+2 leader strength</small>
+                </span>
+              </label>
+
             </div>
           </div>
         </section>
 
         <section class="phase-callout panel report-panel">
-          <h2>Equipment &amp; resolution</h2>
+          <h2>Equipment</h2>
           <div class="panel-body">
             <div class="field">
               <label for="weapon">Weapon</label>
@@ -121,13 +121,93 @@
               </select>
             </div>
 
-            <div id="battleStatus" class="battle-status" role="status" aria-live="polite"></div>
-            <ul id="battleLog" class="battle-log"></ul>
+            <div class="preparation-preview" aria-live="polite">
+              <span class="field-label">Strength preview</span>
+              <div class="score-grid preparation-score-grid">
+                <div><span>Forces</span><strong id="previewForces">0</strong></div>
+                <div><span>Leader</span><strong id="previewLeader">0</strong></div>
+                <div class="score-grid__total"><span>Total</span><strong id="previewTotal">0</strong></div>
+              </div>
+            </div>
 
-            <button id="confirmBtn" class="primary-btn" type="button" disabled>Confirm battle plan</button>
+            <div id="battleStatus" class="battle-status" role="status" aria-live="polite" hidden></div>
+            <ul id="battleLog" class="battle-log" hidden></ul>
+
+
           </div>
         </section>
+
+        <div class="plan-confirm-row">
+          <button id="confirmBtn" class="primary-btn plan-confirm-button" type="button" disabled>Confirm battle plan</button>
+        </div>
       </main>
+
+      <section id="battlePlanResult" class="phase-callout battle-plan-result" hidden>
+        <h2>Revealed battle plan</h2>
+        <div class="panel-body result-screen-body">
+          <div class="result-layout">
+            <div class="reconstructed-wheel" id="resultWheel">
+              <div class="result-force-window">
+                <strong id="resultForceStrength">0</strong>
+                <span>FORCE</span>
+              </div>
+              <strong class="result-wheel-title">BATTLE WHEEL</strong>
+              <span id="resultFactionName" class="result-wheel-faction"></span>
+              <div id="resultLeaderSlot" class="result-leader-slot">
+                <img id="resultLeaderImage" alt="" hidden />
+                <span id="resultLeaderFallback">—</span>
+              </div>
+              <img id="resultKwisatzImage" class="result-kwisatz-token" src="img/token-kwisatz-haderach.png" alt="Kwisatz Haderach" hidden />
+              <span id="resultLeaderName" class="result-leader-name">No leader</span>
+            </div>
+
+            <div class="result-details">
+              <div class="result-cards" aria-label="Treachery cards used">
+                <article id="resultWeaponCard" class="result-card" data-empty="true">
+                  <span>Weapon</span>
+                  <img id="resultWeaponImage" alt="" hidden />
+                  <strong id="resultWeaponName">No weapon</strong>
+                </article>
+                <article id="resultDefenseCard" class="result-card" data-empty="true">
+                  <span>Defense</span>
+                  <img id="resultDefenseImage" alt="" hidden />
+                  <strong id="resultDefenseName">No defense</strong>
+                </article>
+              </div>
+
+              <div id="variableLeaderField" class="field variable-leader-field" hidden>
+                <label for="variableLeaderStrength">Opponent leader strength</label>
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" data-target="variableLeaderStrength" data-step="-1" aria-label="Reduce opponent leader strength by one">−</button>
+                  <input id="variableLeaderStrength" type="number" min="0" max="7" value="0" inputmode="numeric" />
+                  <button type="button" class="stepper-btn" data-target="variableLeaderStrength" data-step="1" aria-label="Increase opponent leader strength by one">+</button>
+                </div>
+                <small>Zoal matches the printed strength of the opposing leader; use 0 against a Cheap Hero.</small>
+              </div>
+
+              <label id="leaderKilledField" class="check-option" hidden>
+                <input id="resultLeaderKilled" type="checkbox" />
+                Leader killed by the opponent’s weapon
+              </label>
+
+              <div class="result-breakdown-block">
+                <span class="field-label">Strength breakdown</span>
+                <ul id="resultBreakdown" class="result-breakdown" aria-live="polite"></ul>
+              </div>
+
+              <div class="score-grid result-score-grid" aria-live="polite">
+                <div><span>Forces</span><strong id="resultForces">0</strong></div>
+                <div><span>Leader</span><strong id="resultLeader">0</strong></div>
+                <div class="score-grid__total"><span>Final total</span><strong id="resultTotal">0</strong></div>
+              </div>
+
+              <p id="resultOutcome" class="battle-status battle-status--neutral"></p>
+              <button id="backToPlan" class="result-back-button" type="button">Back</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section id="gameSetup" class="phase-callout game-setup-panel" hidden>
         <h2>Game setup</h2>
         <div class="panel-body game-setup-body">
@@ -151,6 +231,6 @@
       </p>
     </footer>
 
-    <script src="script.js?v=20260916-leader-values"></script>
+    <script src="script.js?v=20260916-kwisatz"></script>
   </body>
 </html>
