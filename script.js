@@ -2,6 +2,35 @@ const SELECTED_FACTION_STORAGE_KEY = 'duneBattleWheel.selectedFaction';
 const FACTIONS_IN_PLAY_STORAGE_KEY = 'duneBattleWheel.factionsInPlay';
 const FACTION_ORDER = ['atreides', 'bene', 'choam', 'ecaz', 'emperor', 'fremen', 'harkonnen', 'ixians', 'moritani', 'richese', 'guild', 'tleilaxu'];
 
+const treacheryCards = {
+  'poison-tooth': { name: 'Poison Tooth', special: true },
+  'basilia-weapon': { name: 'Basilia Weapon', attack: ['poison'] },
+  chaumurky: { name: 'Chaumurky', attack: ['poison'] },
+  'gom-jabbar': { name: 'Gom Jabbar', attack: ['poison'] },
+  'ellaca-drug': { name: 'Ellaca Drug', attack: ['poison'], image: 'treachery-card-ellaca-drug.png' },
+  chaumas: { name: 'Chaumas', attack: ['poison'] },
+  crysknife: { name: 'Crysknife', attack: ['projectile'] },
+  'maula-pistol': { name: 'Maula Pistol', attack: ['projectile'], image: 'treachery-card-maula-pistol.png' },
+  stunner: { name: 'Stunner', attack: ['projectile'] },
+  'hunter-seeker': { name: 'Hunter Seeker', attack: ['projectile'] },
+  'slip-tip': { name: 'Slip Tip', attack: ['projectile'] },
+  'poison-blade': { name: 'Poison Blade', attack: ['poison', 'projectile'] },
+  'artillery-strike': { name: 'Artillery Strike', special: true },
+  lasgun: { name: 'Lasgun', lasgun: true, special: true, image: 'treachery-card-lasgun.png' },
+  reinforcements: { name: 'Reinforcements', nonLethal: true, special: true },
+  'weirding-way': { name: 'Weirding Way', attack: ['projectile'], blocks: ['projectile'], special: true },
+  chemistry: { name: 'Chemistry', attack: ['poison'], blocks: ['poison'], special: true },
+  snooper: { name: 'Snooper', blocks: ['poison'], image: 'treachery-card-snooper.png' },
+  shield: { name: 'Shield', blocks: ['projectile'], shield: true, image: 'treachery-card-shield.png' },
+  'shield-snooper': { name: 'Shield Snooper', blocks: ['poison', 'projectile'], shield: true },
+  'kul-wahad': { name: 'Kul Wahad', worthless: true },
+  'jubba-cloak': { name: 'Jubba Cloak', worthless: true },
+  baliset: { name: 'Baliset', worthless: true },
+  'trip-to-gamont': { name: 'Trip to Gamont', worthless: true },
+  'la-la-la': { name: 'La, La, La', worthless: true },
+  kulon: { name: 'Kulon', worthless: true }
+};
+
 const factionConfig = {
   atreides: {
     name: 'Atreides',
@@ -200,6 +229,10 @@ const elements = {
   resultDefenseCard: document.getElementById('resultDefenseCard'),
   resultDefenseImage: document.getElementById('resultDefenseImage'),
   resultDefenseName: document.getElementById('resultDefenseName'),
+  poisonToothField: document.getElementById('poisonToothField'),
+  usePoisonTooth: document.getElementById('usePoisonTooth'),
+  lasgunOpponentShieldField: document.getElementById('lasgunOpponentShieldField'),
+  lasgunOpponentShield: document.getElementById('lasgunOpponentShield'),
   leaderKilledField: document.getElementById('leaderKilledField'),
   resultLeaderKilled: document.getElementById('resultLeaderKilled'),
   resultForces: document.getElementById('resultForces'),
@@ -208,6 +241,13 @@ const elements = {
   resultOutcome: document.getElementById('resultOutcome'),
   resultBreakdown: document.getElementById('resultBreakdown'),
   backToPlan: document.getElementById('backToPlan'),
+  dualRoleDialog: document.getElementById('dualRoleDialog'),
+  dualRoleDialogTitle: document.getElementById('dualRoleDialogTitle'),
+  dualRoleDialogMessage: document.getElementById('dualRoleDialogMessage'),
+  dualRoleDialogWarning: document.getElementById('dualRoleDialogWarning'),
+  cancelDualRoleChange: document.getElementById('cancelDualRoleChange'),
+  replaceDualRoleCard: document.getElementById('replaceDualRoleCard'),
+  convertDualRoleCard: document.getElementById('convertDualRoleCard'),
   previewForces: document.getElementById('previewForces'),
   previewLeader: document.getElementById('previewLeader'),
   previewTotal: document.getElementById('previewTotal'),
@@ -231,6 +271,7 @@ const elements = {
   ecazForcesField: document.getElementById('ecazForcesField'),
   ecazForces: document.getElementById('ecazForces'),
   ecazKaramaNotice: document.getElementById('ecazKaramaNotice'),
+  reinforcementsNotice: document.getElementById('reinforcementsNotice'),
   ecazKaramaField: document.getElementById('ecazKaramaField'),
   ecazKarama: document.getElementById('ecazKarama'),
   ecazOpponentLeaderField: document.getElementById('ecazOpponentLeaderField'),
@@ -274,6 +315,9 @@ let setupDraftYourFaction = 'atreides';
 let previousSetupYourFaction = '';
 let changingYourFaction = false;
 let gameSetupWarning = '';
+let committedWeaponSelection = 'none';
+let committedDefenseSelection = 'none';
+let pendingDualRoleChange = null;
 
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
@@ -325,6 +369,8 @@ function setFactionSelectionMode(hasFaction) {
   elements.ecazForces.disabled = !hasFaction;
   elements.ecazKarama.disabled = !hasFaction;
   elements.ecazOpponentLeaderStrength.disabled = !hasFaction;
+  elements.usePoisonTooth.disabled = !hasFaction;
+  elements.lasgunOpponentShield.disabled = !hasFaction;
   elements.spice.disabled = !hasFaction;
   elements.fremenOpponent.disabled = !hasFaction;
   elements.kwisatzHaderach.disabled = !hasFaction;
@@ -344,6 +390,13 @@ function resetApplication({ clearStorage = true } = {}) {
   selectedLeader = null;
   leaderView = 'leaders';
   capturedFactionKey = null;
+  committedWeaponSelection = 'none';
+  committedDefenseSelection = 'none';
+  pendingDualRoleChange = null;
+
+  if (elements.dualRoleDialog.open) {
+    elements.dualRoleDialog.close();
+  }
 
   elements.gameSetup.hidden = true;
   elements.battlePlanResult.hidden = true;
@@ -361,14 +414,19 @@ function resetApplication({ clearStorage = true } = {}) {
   elements.ecazForces.value = 0;
   elements.ecazKarama.checked = false;
   elements.ecazOpponentLeaderStrength.value = 0;
+  elements.usePoisonTooth.checked = false;
+  elements.lasgunOpponentShield.checked = false;
   elements.spice.value = 0;
   elements.fremenOpponent.checked = false;
   elements.specialField.hidden = true;
   elements.ecazAllianceField.hidden = true;
   elements.ecazForcesField.hidden = true;
   elements.ecazKaramaNotice.hidden = true;
+  elements.reinforcementsNotice.hidden = true;
   elements.ecazKaramaField.hidden = true;
   elements.ecazOpponentLeaderField.hidden = true;
+  elements.poisonToothField.hidden = true;
+  elements.lasgunOpponentShieldField.hidden = true;
   elements.spiceField.hidden = true;
   elements.fremenOpponentField.hidden = true;
   elements.leaderMenu.replaceChildren();
@@ -409,6 +467,105 @@ function updateEquipmentAvailability() {
     elements.weapon.value = 'none';
     elements.defense.value = 'none';
   }
+
+  updateTreacheryCardOptions();
+  updateReinforcementsAvailability();
+  committedWeaponSelection = elements.weapon.value;
+  committedDefenseSelection = elements.defense.value;
+}
+
+function updateTreacheryCardOptions() {
+  if (elements.defense.value === 'weirding-way' && elements.weapon.value === 'none') {
+    elements.defense.value = 'none';
+  }
+  if (elements.weapon.value === 'chemistry' && elements.defense.value === 'none') {
+    elements.weapon.value = 'none';
+  }
+
+  const selectedWeapon = elements.weapon.value;
+  const selectedDefense = elements.defense.value;
+
+  Array.from(elements.weapon.options).forEach((option) => {
+    option.disabled = (
+      option.value !== 'none' && option.value === selectedDefense
+    ) || (
+      option.value === 'chemistry' && selectedDefense === 'none'
+    );
+  });
+  Array.from(elements.defense.options).forEach((option) => {
+    option.disabled = (
+      option.value !== 'none' && option.value === selectedWeapon
+    ) || (
+      option.value === 'weirding-way' && selectedWeapon === 'none'
+    );
+  });
+}
+
+function updatePoisonToothAvailability() {
+  const selected = elements.weapon.value === 'poison-tooth';
+  elements.poisonToothField.hidden = !selected;
+
+  if (!selected) {
+    elements.usePoisonTooth.checked = false;
+  }
+}
+
+function updateLasgunAvailability() {
+  const selected = elements.weapon.value === 'lasgun';
+  elements.lasgunOpponentShieldField.hidden = !selected;
+
+  if (!selected) {
+    elements.lasgunOpponentShield.checked = false;
+  }
+}
+
+function updateReinforcementsAvailability() {
+  elements.reinforcementsNotice.hidden = !(
+    elements.weapon.value === 'reinforcements' ||
+    elements.defense.value === 'reinforcements'
+  );
+}
+
+function applyEquipmentSelection() {
+  updateTreacheryCardOptions();
+  updateEcazKaramaAvailability();
+  updatePoisonToothAvailability();
+  updateLasgunAvailability();
+  updateReinforcementsAvailability();
+  committedWeaponSelection = elements.weapon.value;
+  committedDefenseSelection = elements.defense.value;
+  calculatePlan();
+}
+
+function closeDualRoleDialog() {
+  pendingDualRoleChange = null;
+  elements.dualRoleDialog.close();
+}
+
+function showDualRoleDialog(type, replacement) {
+  const replacingWeirdingWay = type === 'weirding-way';
+  const cardName = replacingWeirdingWay ? 'Weirding Way' : 'Chemistry';
+  const replacementName = treacheryCards[replacement].name;
+  const occupiedValue = replacingWeirdingWay
+    ? committedDefenseSelection
+    : committedWeaponSelection;
+  const occupiedName = occupiedValue === 'none'
+    ? ''
+    : treacheryCards[occupiedValue].name;
+
+  pendingDualRoleChange = { type, replacement };
+  elements.dualRoleDialogTitle.textContent = 'Choose how to play ' + cardName;
+  elements.dualRoleDialogMessage.textContent = replacingWeirdingWay
+    ? 'You selected ' + replacementName + ' as your Weapon. Replace Weirding Way, or use Weirding Way as a Projectile Defense.'
+    : 'You selected ' + replacementName + ' as your Defense. Replace Chemistry, or use Chemistry as a Poison Weapon.';
+  elements.dualRoleDialogWarning.textContent = occupiedName
+    ? 'Changing its role will replace ' + occupiedName + ', your currently selected ' + (replacingWeirdingWay ? 'Defense.' : 'Weapon.')
+    : 'Changing its role will fill the empty ' + (replacingWeirdingWay ? 'Defense' : 'Weapon') + ' slot.';
+  elements.replaceDualRoleCard.textContent = 'Replace ' + cardName;
+  elements.convertDualRoleCard.textContent = replacingWeirdingWay
+    ? 'Use as Defense'
+    : 'Use as Weapon';
+  elements.dualRoleDialog.showModal();
 }
 
 function updateVariableLeaderField() {
@@ -464,6 +621,8 @@ function selectLeader(leader) {
   updateVariableLeaderField();
   updateKwisatzAvailability();
   updateEcazKaramaAvailability();
+  updatePoisonToothAvailability();
+  updateLasgunAvailability();
   buildLeaderMenu();
   calculatePlan();
 }
@@ -820,6 +979,8 @@ function updateFactionFields() {
   updateVariableLeaderField();
   updateKwisatzAvailability();
   updateEcazKaramaAvailability();
+  updatePoisonToothAvailability();
+  updateLasgunAvailability();
   leaderView = 'leaders';
   capturedFactionKey = null;
   buildLeaderMenu();
@@ -828,21 +989,53 @@ function updateFactionFields() {
 }
 
 function equipmentStatus() {
-  const weapon = elements.weapon.value;
-  const defense = elements.defense.value;
+  const weapon = treacheryCards[elements.weapon.value];
+  const defense = treacheryCards[elements.defense.value];
+  const usesArtilleryStrike = elements.weapon.value === 'artillery-strike';
+  const selectedPoisonTooth = elements.weapon.value === 'poison-tooth';
+  const usesLasgun = elements.weapon.value === 'lasgun';
+  const hasShieldDefense = Boolean(defense?.shield);
+  const isBlocked = Boolean(
+    weapon?.attack?.every((attackType) => defense?.blocks?.includes(attackType))
+  );
 
-  if (weapon === 'lasgun' && defense === 'shield') {
+  if (usesArtilleryStrike) {
+    return hasShieldDefense
+      ? {
+          type: 'safe',
+          title: 'Leader protected from Artillery Strike',
+          detail: 'Artillery Strike kills both leaders unless protected by a Shield. Your leader survives, but contributes no strength.'
+        }
+      : {
+          type: 'danger',
+          title: 'Artillery Strike kills both leaders',
+          detail: 'Your leader has no Shield, is killed, and contributes no strength.'
+        };
+  }
+
+  if (selectedPoisonTooth) {
     return {
-      type: 'danger',
-      title: 'Lasgun–shield explosion!',
-      detail: 'Both leaders and all forces on both sides are destroyed.'
+      type: 'warning',
+      title: 'Poison Tooth decision after reveal',
+      detail: 'After comparing battle plans, choose whether to use it. If used, both leaders are killed and Snooper cannot stop it.'
     };
   }
 
-  if (
-    (weapon === 'projectile' && defense === 'shield') ||
-    (weapon === 'poison' && defense === 'snooper')
-  ) {
+  if (usesLasgun) {
+    return hasShieldDefense
+      ? {
+          type: 'danger',
+          title: 'Atomic explosion!',
+          detail: 'Lasgun combined with your Shield destroys both leaders and all forces on both sides.'
+        }
+      : {
+          type: 'warning',
+          title: 'Check the opponent’s defense after reveal',
+          detail: 'If the opponent played a Shield defense, Lasgun causes an atomic explosion.'
+        };
+  }
+
+  if (isBlocked) {
     return {
       type: 'safe',
       title: 'Leader protected',
@@ -850,7 +1043,7 @@ function equipmentStatus() {
     };
   }
 
-  if (weapon === 'none' || weapon === 'worthless') {
+  if (!weapon || weapon.worthless || weapon.nonLethal) {
     return {
       type: 'neutral',
       title: 'No lethal threat',
@@ -889,7 +1082,17 @@ function getBattlePlanValues() {
     elements.kwisatzHaderach.checked
   );
   const kwisatzBonus = usesKwisatz ? 2 : 0;
-  const leaderStrength = baseLeaderStrength + kwisatzBonus;
+  const usesArtilleryStrike = elements.weapon.value === 'artillery-strike';
+  const usesPoisonTooth = elements.weapon.value === 'poison-tooth' && elements.usePoisonTooth.checked;
+  const usesLasgun = elements.weapon.value === 'lasgun';
+  const hasShieldDefense = Boolean(treacheryCards[elements.defense.value]?.shield);
+  const atomicExplosion = usesLasgun && (
+    hasShieldDefense ||
+    elements.lasgunOpponentShield.checked
+  );
+  const leaderStrength = usesArtilleryStrike || usesPoisonTooth || atomicExplosion
+    ? 0
+    : baseLeaderStrength + kwisatzBonus;
   const usesEcazKarama = Boolean(
     elements.faction.value === 'ecaz' &&
     selectedLeader &&
@@ -904,6 +1107,11 @@ function getBattlePlanValues() {
   const ecazKaramaBonus = usesEcazKarama
     ? Math.abs(baseLeaderStrength - opponentLeaderStrength)
     : 0;
+  const usesReinforcements = (
+    elements.weapon.value === 'reinforcements' ||
+    elements.defense.value === 'reinforcements'
+  );
+  const reinforcementsBonus = usesReinforcements ? 2 : 0;
   let spice = numericValue(elements.spice);
   let ordinaryStrength;
 
@@ -925,7 +1133,7 @@ function getBattlePlanValues() {
   }
 
   const specialStrength = specialForces * specialMultiplier;
-  const forceStrength = ordinaryStrength + specialStrength + ecazStrength + ecazKaramaBonus;
+  const forceStrength = ordinaryStrength + specialStrength + ecazStrength + ecazKaramaBonus + reinforcementsBonus;
 
   return {
     faction,
@@ -940,9 +1148,16 @@ function getBattlePlanValues() {
     baseLeaderStrength,
     usesKwisatz,
     kwisatzBonus,
+    usesArtilleryStrike,
+    hasShieldDefense,
+    usesPoisonTooth,
+    usesLasgun,
+    atomicExplosion,
     usesEcazKarama,
     opponentLeaderStrength,
     ecazKaramaBonus,
+    usesReinforcements,
+    reinforcementsBonus,
     baseForceStrength: faction.fullStrength ? forces : forces / 2,
     spiceStrength: !faction.fullStrength && !faction.fixedHalfStrength ? spice / 2 : 0,
     specialMultiplier,
@@ -964,6 +1179,7 @@ function calculatePlan() {
     ecazForces,
     ecazParticipatingForces,
     usesEcazKarama,
+    usesReinforcements,
     opponentLeaderStrength,
     ecazKaramaBonus,
     spice,
@@ -972,7 +1188,12 @@ function calculatePlan() {
     total
   } = plan;
   const status = equipmentStatus();
-  const variableLeader = Boolean(selectedLeader?.variableStrength);
+  const variableLeader = Boolean(
+    selectedLeader?.variableStrength &&
+    !plan.usesArtilleryStrike &&
+    !plan.usesPoisonTooth &&
+    !plan.atomicExplosion
+  );
   elements.previewForces.textContent = formatScore(forceStrength);
   elements.previewLeader.textContent = variableLeader ? 'X' : formatScore(leaderStrength);
   elements.previewTotal.textContent = variableLeader
@@ -1011,6 +1232,11 @@ function calculatePlan() {
       'Ecaz Special Karama: |' + formatScore(plan.baseLeaderStrength) + ' − ' + formatScore(opponentLeaderStrength) + '| = +' + formatScore(ecazKaramaBonus) + ' to the number dialed.'
     );
   }
+  if (usesReinforcements) {
+    battleLogItems.push(
+      'Reinforcements: +2 to the number dialed; send 3 forces from reserves to the Tleilaxu Tanks.'
+    );
+  }
   battleLogItems.push(
     'Dialed strength: ' + formatScore(forceStrength) + ' + leader ' + formatScore(leaderStrength) + ' = ' + formatScore(total) + '.'
   );
@@ -1021,17 +1247,19 @@ function calculatePlan() {
   }
 }
 
-function renderResultCard(card, image, name, value, labels) {
+function renderResultCard(card, image, name, value, emptyLabel) {
   const isEmpty = value === 'none';
+  const treacheryCard = treacheryCards[value];
   card.dataset.empty = String(isEmpty);
-  name.textContent = labels[value];
+  name.textContent = isEmpty ? emptyLabel : treacheryCard.name;
   image.hidden = isEmpty;
 
   if (!isEmpty) {
-    image.src = value === 'worthless'
-      ? 'img/card-worthless.png'
-      : 'img/card-treachery-back.png';
-    image.alt = labels[value];
+    image.src = 'img/' + (
+      treacheryCard.image ||
+      (treacheryCard.worthless ? 'card-worthless.png' : 'card-treachery-back.png')
+    );
+    image.alt = treacheryCard.name;
   }
 }
 
@@ -1082,18 +1310,34 @@ function renderStrengthBreakdown(plan, effectiveLeaderStrength, leaderKilled) {
     );
   }
 
+  if (plan.usesReinforcements) {
+    addRow('Reinforcements', '+2');
+  }
+
   addRow('Dialed strength', formatScore(plan.forceStrength), true);
 
   const leaderName = selectedLeader?.name || 'No leader';
-  const leaderValue = leaderKilled
-    ? formatScore(plan.baseLeaderStrength) + ' → 0 (killed)'
-    : '+' + formatScore(plan.baseLeaderStrength);
+  const leaderValue = plan.atomicExplosion
+    ? formatScore(plan.baseLeaderStrength) + ' → 0 (atomic explosion)'
+    : plan.usesPoisonTooth
+    ? formatScore(plan.baseLeaderStrength) + ' → 0 (Poison Tooth)'
+    : leaderKilled
+      ? formatScore(plan.baseLeaderStrength) + ' → 0 (killed)'
+    : plan.usesArtilleryStrike
+      ? formatScore(plan.baseLeaderStrength) + ' → 0 (Artillery Strike)'
+      : '+' + formatScore(plan.baseLeaderStrength);
   addRow(leaderName, leaderValue);
 
   if (plan.usesKwisatz) {
     addRow(
       'Kwisatz Haderach',
-      leaderKilled ? '+2 → 0 (leader killed)' : '+2'
+      leaderKilled
+        ? '+2 → 0 (' + (
+          plan.atomicExplosion ? 'atomic explosion' :
+          plan.usesPoisonTooth ? 'Poison Tooth' :
+          'leader killed'
+        ) + ')'
+        : plan.usesArtilleryStrike ? '+2 → 0 (Artillery Strike)' : '+2'
     );
   }
   addRow(
@@ -1108,7 +1352,15 @@ function renderBattlePlanResult(plan = getBattlePlanValues()) {
 
   const hasLeaderToken = Boolean(selectedLeader?.image);
   const hasPlayedHero = Boolean(selectedLeader && selectedLeader.name !== 'No leader');
-  const leaderKilled = hasPlayedHero && elements.resultLeaderKilled.checked;
+  const artilleryKillsLeader = plan.usesArtilleryStrike && !plan.hasShieldDefense;
+  const poisonToothKillsLeader = plan.usesPoisonTooth;
+  const atomicExplosionKillsLeader = plan.atomicExplosion;
+  const leaderKilled = hasPlayedHero && (
+    elements.resultLeaderKilled.checked ||
+    artilleryKillsLeader ||
+    poisonToothKillsLeader ||
+    atomicExplosionKillsLeader
+  );
   const effectiveLeaderStrength = leaderKilled ? 0 : plan.leaderStrength;
   const finalTotal = plan.forceStrength + effectiveLeaderStrength;
 
@@ -1122,9 +1374,14 @@ function renderBattlePlanResult(plan = getBattlePlanValues()) {
   elements.resultLeaderSlot.dataset.killed = String(leaderKilled);
   elements.resultKwisatzImage.hidden = !plan.usesKwisatz;
   elements.resultKwisatzImage.dataset.killed = String(leaderKilled);
-  elements.leaderKilledField.hidden = !hasPlayedHero;
+  elements.leaderKilledField.hidden = (
+    !hasPlayedHero ||
+    artilleryKillsLeader ||
+    poisonToothKillsLeader ||
+    atomicExplosionKillsLeader
+  );
 
-  if (!hasPlayedHero) {
+  if (!hasPlayedHero || artilleryKillsLeader || poisonToothKillsLeader || atomicExplosionKillsLeader) {
     elements.resultLeaderKilled.checked = false;
   }
 
@@ -1139,20 +1396,24 @@ function renderBattlePlanResult(plan = getBattlePlanValues()) {
     elements.resultLeaderFallback.textContent = selectedLeader?.name === 'Cheap Hero' ? 'H' : '—';
   }
 
-  renderResultCard(elements.resultWeaponCard, elements.resultWeaponImage, elements.resultWeaponName, elements.weapon.value, {
-    none: 'No weapon', projectile: 'Projectile weapon', poison: 'Poison weapon', lasgun: 'Lasgun', worthless: 'Worthless card'
-  });
-  renderResultCard(elements.resultDefenseCard, elements.resultDefenseImage, elements.resultDefenseName, elements.defense.value, {
-    none: 'No defense', shield: 'Shield', snooper: 'Snooper', worthless: 'Worthless card'
-  });
+  renderResultCard(elements.resultWeaponCard, elements.resultWeaponImage, elements.resultWeaponName, elements.weapon.value, 'No weapon');
+  renderResultCard(elements.resultDefenseCard, elements.resultDefenseImage, elements.resultDefenseName, elements.defense.value, 'No defense');
 
   updateVariableLeaderField();
   elements.resultOutcome.className = leaderKilled
     ? 'battle-status battle-status--danger'
     : 'battle-status battle-status--safe';
-  elements.resultOutcome.textContent = leaderKilled
-    ? 'The leader was killed and contributes no strength. Final total: ' + formatScore(finalTotal) + '.'
-    : 'The leader contributes ' + formatScore(effectiveLeaderStrength) + '. Final total: ' + formatScore(finalTotal) + '.';
+  elements.resultOutcome.textContent = atomicExplosionKillsLeader
+    ? 'Atomic explosion: both leaders and all forces on both sides are destroyed.'
+    : poisonToothKillsLeader
+      ? 'Poison Tooth kills both leaders and cannot be stopped by Snooper. Your leader contributes no strength. Final total: ' + formatScore(finalTotal) + '.'
+    : artilleryKillsLeader
+      ? 'Artillery Strike kills both unprotected leaders. Your leader contributes no strength. Final total: ' + formatScore(finalTotal) + '.'
+    : plan.usesArtilleryStrike
+      ? 'Your Shield protects the leader from Artillery Strike, but the leader contributes no strength. Final total: ' + formatScore(finalTotal) + '.'
+      : leaderKilled
+        ? 'The leader was killed and contributes no strength. Final total: ' + formatScore(finalTotal) + '.'
+        : 'The leader contributes ' + formatScore(effectiveLeaderStrength) + '. Final total: ' + formatScore(finalTotal) + '.';
   elements.resultWheel.setAttribute('aria-label', 'Battle wheel showing force strength ' + formatScore(plan.forceStrength));
 }
 
@@ -1194,11 +1455,71 @@ elements.ecazKarama.addEventListener('change', () => {
   calculatePlan();
 });
 
-[elements.weapon, elements.defense].forEach((control) => {
-  control.addEventListener('change', () => {
-    updateEcazKaramaAvailability();
-    calculatePlan();
-  });
+elements.usePoisonTooth.addEventListener('change', calculatePlan);
+elements.lasgunOpponentShield.addEventListener('change', calculatePlan);
+
+elements.weapon.addEventListener('change', () => {
+  const replacement = elements.weapon.value;
+
+  if (
+    committedWeaponSelection === 'weirding-way' &&
+    replacement !== 'none' &&
+    replacement !== 'weirding-way'
+  ) {
+    elements.weapon.value = committedWeaponSelection;
+    showDualRoleDialog('weirding-way', replacement);
+    return;
+  }
+
+  applyEquipmentSelection();
+});
+
+elements.defense.addEventListener('change', () => {
+  const replacement = elements.defense.value;
+
+  if (
+    committedDefenseSelection === 'chemistry' &&
+    replacement !== 'none' &&
+    replacement !== 'chemistry'
+  ) {
+    elements.defense.value = committedDefenseSelection;
+    showDualRoleDialog('chemistry', replacement);
+    return;
+  }
+
+  applyEquipmentSelection();
+});
+
+elements.cancelDualRoleChange.addEventListener('click', closeDualRoleDialog);
+elements.dualRoleDialog.addEventListener('cancel', (event) => {
+  event.preventDefault();
+  closeDualRoleDialog();
+});
+elements.replaceDualRoleCard.addEventListener('click', () => {
+  if (!pendingDualRoleChange) return;
+
+  if (pendingDualRoleChange.type === 'weirding-way') {
+    elements.weapon.value = pendingDualRoleChange.replacement;
+  } else {
+    elements.defense.value = pendingDualRoleChange.replacement;
+  }
+
+  closeDualRoleDialog();
+  applyEquipmentSelection();
+});
+elements.convertDualRoleCard.addEventListener('click', () => {
+  if (!pendingDualRoleChange) return;
+
+  if (pendingDualRoleChange.type === 'weirding-way') {
+    elements.weapon.value = pendingDualRoleChange.replacement;
+    elements.defense.value = 'weirding-way';
+  } else {
+    elements.defense.value = pendingDualRoleChange.replacement;
+    elements.weapon.value = 'chemistry';
+  }
+
+  closeDualRoleDialog();
+  applyEquipmentSelection();
 });
 
 [

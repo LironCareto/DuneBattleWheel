@@ -1289,6 +1289,54 @@ input[type="range"] {
   color: var(--blue-heading);
 }
 
+.dual-role-dialog {
+  width: min(34rem, calc(100% - 2rem));
+  padding: 0;
+  border: 1px solid #b7b0a1;
+  border-radius: 0.3rem;
+  background: #e9e3d0;
+  color: #070707;
+  box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.35);
+}
+
+.dual-role-dialog::backdrop {
+  background: rgba(18, 28, 40, 0.65);
+}
+
+.dual-role-dialog__content {
+  padding: 1rem;
+}
+
+.dual-role-dialog h2 {
+  margin: -1rem -1rem 1rem;
+  padding: 0.55rem 1rem;
+  background: var(--blue-callout);
+  color: #fff;
+  font-family: "Copperplate Gothic Bold", "Balthazar", serif;
+  font-size: 1rem;
+  font-variant: small-caps;
+  text-align: center;
+  text-shadow: 1px 1px 0 #1d3455;
+}
+
+.dual-role-dialog__actions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.dual-role-dialog__actions .primary-btn {
+  min-height: 3rem;
+  margin: 0;
+}
+
+@media (max-width: 38rem) {
+  .dual-role-dialog__actions {
+    grid-template-columns: 1fr;
+  }
+}
+
 .battle-plan-result {
   width: min(72rem, calc(100% - 1rem));
   margin-block: 1.25rem 2rem;

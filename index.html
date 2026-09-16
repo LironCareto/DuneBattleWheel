@@ -126,10 +126,35 @@
               <label for="weapon">Weapon</label>
               <select id="weapon" disabled>
                 <option value="none">No weapon</option>
-                <option value="projectile">Projectile weapon</option>
-                <option value="poison">Poison weapon</option>
+                <optgroup label="Poison weapons">
+                  <option value="poison-tooth">Poison Tooth</option>
+                  <option value="basilia-weapon">Basilia Weapon</option>
+                  <option value="chaumurky">Chaumurky</option>
+                  <option value="gom-jabbar">Gom Jabbar</option>
+                  <option value="ellaca-drug">Ellaca Drug</option>
+                  <option value="chaumas">Chaumas</option>
+                </optgroup>
+                <optgroup label="Projectile weapons">
+                  <option value="crysknife">Crysknife</option>
+                  <option value="maula-pistol">Maula Pistol</option>
+                  <option value="stunner">Stunner</option>
+                  <option value="hunter-seeker">Hunter Seeker</option>
+                  <option value="slip-tip">Slip Tip</option>
+                </optgroup>
+                <option value="poison-blade">Poison Blade</option>
+                <option value="artillery-strike">Artillery Strike</option>
                 <option value="lasgun">Lasgun</option>
-                <option value="worthless">Worthless card</option>
+                <option value="reinforcements">Reinforcements</option>
+                <option value="weirding-way">Weirding Way</option>
+                <option value="chemistry">Chemistry</option>
+                <optgroup label="Worthless cards">
+                  <option value="kul-wahad">Kul Wahad</option>
+                  <option value="jubba-cloak">Jubba Cloak</option>
+                  <option value="baliset">Baliset</option>
+                  <option value="trip-to-gamont">Trip to Gamont</option>
+                  <option value="la-la-la">La, La, La</option>
+                  <option value="kulon">Kulon</option>
+                </optgroup>
               </select>
             </div>
 
@@ -137,15 +162,31 @@
               <label for="defense">Defense</label>
               <select id="defense" disabled>
                 <option value="none">No defense</option>
-                <option value="shield">Shield</option>
                 <option value="snooper">Snooper</option>
-                <option value="worthless">Worthless card</option>
+                <option value="shield">Shield</option>
+                <option value="shield-snooper">Shield Snooper</option>
+                <option value="reinforcements">Reinforcements</option>
+                <option value="weirding-way">Weirding Way</option>
+                <option value="chemistry">Chemistry</option>
+                <optgroup label="Worthless cards">
+                  <option value="kul-wahad">Kul Wahad</option>
+                  <option value="jubba-cloak">Jubba Cloak</option>
+                  <option value="baliset">Baliset</option>
+                  <option value="trip-to-gamont">Trip to Gamont</option>
+                  <option value="la-la-la">La, La, La</option>
+                  <option value="kulon">Kulon</option>
+                </optgroup>
               </select>
             </div>
 
             <div id="ecazKaramaNotice" class="battle-status battle-status--warning" role="status" hidden>
               <strong>Special Karama Power available</strong>
               <span>Ecaz will be able to use its Special Karama Power (requires a Karama Card).</span>
+            </div>
+
+            <div id="reinforcementsNotice" class="battle-status battle-status--warning" role="status" hidden>
+              <strong>Reinforcements requirement</strong>
+              <span>Requires at least 3 forces in reserves. Add +2 to the number dialed and send 3 forces from reserves to the Tleilaxu Tanks.</span>
             </div>
 
             <div class="preparation-preview" aria-live="polite">
@@ -229,6 +270,22 @@
                 </div>
               </div>
 
+              <div id="poisonToothField" class="field" hidden>
+                <label class="check-option">
+                  <input id="usePoisonTooth" type="checkbox" />
+                  Use Poison Tooth
+                </label>
+                <small class="field-help">Decide after comparing the battle plans. If used, both leaders are killed and Snooper cannot stop it.</small>
+              </div>
+
+              <div id="lasgunOpponentShieldField" class="field" hidden>
+                <label class="check-option">
+                  <input id="lasgunOpponentShield" type="checkbox" />
+                  Opponent played a Shield defense
+                </label>
+                <small class="field-help">A Lasgun combined with either player's Shield causes an atomic explosion.</small>
+              </div>
+
               <label id="leaderKilledField" class="check-option" hidden>
                 <input id="resultLeaderKilled" type="checkbox" />
                 Leader killed by the opponent’s weapon
@@ -267,6 +324,19 @@
         </div>
       </section>
     </div>
+
+    <dialog id="dualRoleDialog" class="dual-role-dialog">
+      <div class="dual-role-dialog__content">
+        <h2 id="dualRoleDialogTitle">Choose how to play this card</h2>
+        <p id="dualRoleDialogMessage"></p>
+        <p id="dualRoleDialogWarning" class="battle-status battle-status--warning"></p>
+        <div class="dual-role-dialog__actions">
+          <button id="cancelDualRoleChange" class="primary-btn secondary-btn" type="button">Cancel</button>
+          <button id="replaceDualRoleCard" class="primary-btn secondary-btn" type="button">Replace card</button>
+          <button id="convertDualRoleCard" class="primary-btn" type="button">Change role</button>
+        </div>
+      </div>
+    </dialog>
 
     <footer class="rulebook-footer" aria-hidden="true">
       <p class="footer-artwork">
