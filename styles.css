@@ -973,14 +973,6 @@ input[type="range"] {
   outline: 2px solid var(--blue-heading);
   outline-offset: 3px;
 }
-@font-face {
-  font-family: "Advokat Modern Digits";
-  src: url("fonts/AdvokatModern-Digits.ttf") format("truetype");
-  font-display: swap;
-  font-style: normal;
-  font-weight: 400;
-}
-
 .center-badge {
   inset: 27%;
   display: flex;
@@ -1031,7 +1023,7 @@ input[type="range"] {
   justify-content: center;
   width: 100%;
   color: #050505;
-  font-family: "Advokat Modern Digits", fantasy;
+  font-family: "Balthazar", serif;
   font-size: clamp(2.65rem, 7vw, 3.8rem);
   font-weight: 400;
   line-height: 0.8;

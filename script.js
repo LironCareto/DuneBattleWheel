@@ -554,7 +554,7 @@ function buildLeaderMenu() {
   }
 
   const noLeader = { name: 'No leader', strength: 0, image: null, capturedFrom: null };
-  const cheapHero = { name: 'Cheap Hero', strength: 0, image: null, capturedFrom: null };
+  const cheapHero = { name: 'Cheap Hero', strength: 0, image: 'cheap-hero.png', capturedFrom: null };
 
   actions.append(
     createUtilityButton('No leader', '—', () => selectLeader(noLeader), isSelected(noLeader)),
