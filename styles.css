@@ -1224,6 +1224,23 @@ input[type="range"] {
   color: #664d03;
 }
 
+.game-setup-change {
+  display: block;
+  margin: 0.3rem auto 0;
+  padding: 0.55rem 0.8rem;
+  border: 1px solid var(--blue-heading);
+  border-radius: 0.25rem;
+  background: var(--blue-heading);
+  color: #fff;
+  cursor: pointer;
+  font-family: "Copperplate Gothic Bold", "Balthazar", serif;
+  font-size: 0.78rem;
+  font-variant: small-caps;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-shadow: 1px 1px 0 #172a40;
+}
+
 .game-setup-summary {
   margin: 0.8rem 0 0;
   color: #58544b;

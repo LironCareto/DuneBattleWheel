@@ -218,9 +218,8 @@ const elements = {
   gameSetupInstructions: document.getElementById('gameSetupInstructions'),
   gameSetupNotice: document.getElementById('gameSetupNotice'),
   gameSetupSummary: document.getElementById('gameSetupSummary'),
+  changeYourFaction: document.getElementById('changeYourFaction'),
   cancelGameSetup: document.getElementById('cancelGameSetup'),
-  backGameSetup: document.getElementById('backGameSetup'),
-  advanceGameSetup: document.getElementById('advanceGameSetup'),
   saveGameSetup: document.getElementById('saveGameSetup'),
   forces: document.getElementById('forces'),
   forcesLabel: document.getElementById('forcesLabel'),
@@ -231,6 +230,7 @@ const elements = {
   ecazAlliance: document.getElementById('ecazAlliance'),
   ecazForcesField: document.getElementById('ecazForcesField'),
   ecazForces: document.getElementById('ecazForces'),
+  ecazKaramaNotice: document.getElementById('ecazKaramaNotice'),
   ecazKaramaField: document.getElementById('ecazKaramaField'),
   ecazKarama: document.getElementById('ecazKarama'),
   ecazOpponentLeaderField: document.getElementById('ecazOpponentLeaderField'),
@@ -271,7 +271,8 @@ let capturedFactionKey = null;
 let factionsInPlay = new Set();
 let setupDraftFactions = new Set();
 let setupDraftYourFaction = 'atreides';
-let gameSetupStep = 'factions';
+let previousSetupYourFaction = '';
+let changingYourFaction = false;
 let gameSetupWarning = '';
 
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
@@ -337,7 +338,8 @@ function resetApplication({ clearStorage = true } = {}) {
   factionsInPlay = new Set();
   setupDraftFactions = new Set();
   setupDraftYourFaction = '';
-  gameSetupStep = 'factions';
+  previousSetupYourFaction = '';
+  changingYourFaction = false;
   gameSetupWarning = '';
   selectedLeader = null;
   leaderView = 'leaders';
@@ -364,6 +366,7 @@ function resetApplication({ clearStorage = true } = {}) {
   elements.specialField.hidden = true;
   elements.ecazAllianceField.hidden = true;
   elements.ecazForcesField.hidden = true;
+  elements.ecazKaramaNotice.hidden = true;
   elements.ecazKaramaField.hidden = true;
   elements.ecazOpponentLeaderField.hidden = true;
   elements.spiceField.hidden = true;
@@ -431,16 +434,16 @@ function updateKwisatzAvailability() {
 }
 
 function updateEcazKaramaAvailability() {
-  const hasLeaderDisc = Boolean(
+  const hasLeaderOrCheapHero = Boolean(
     selectedLeader &&
-    selectedLeader.name !== 'No leader' &&
-    selectedLeader.name !== 'Cheap Hero'
+    selectedLeader.name !== 'No leader'
   );
   const hasNoWeaponOrDefense = elements.weapon.value === 'none' && elements.defense.value === 'none';
   const isEcaz = elements.faction.value === 'ecaz';
-  const eligible = isEcaz && hasLeaderDisc && hasNoWeaponOrDefense;
+  const eligible = isEcaz && hasLeaderOrCheapHero && hasNoWeaponOrDefense;
 
-  elements.ecazKaramaField.hidden = !isEcaz;
+  elements.ecazKaramaNotice.hidden = !eligible;
+  elements.ecazKaramaField.hidden = !eligible;
   elements.ecazKarama.disabled = !eligible;
 
   if (!eligible) {
@@ -640,19 +643,17 @@ function buildLeaderMenu() {
 
 function renderGameSetup() {
   elements.gameSetupGrid.replaceChildren();
-  const selectingYourFaction = gameSetupStep === 'your-faction';
 
   FACTION_ORDER.forEach((key) => {
     const faction = factionConfig[key];
     const isActive = setupDraftFactions.has(key);
-    const isYourFaction = selectingYourFaction && setupDraftYourFaction === key;
+    const isYourFaction = setupDraftYourFaction === key;
     const button = document.createElement('button');
     button.type = 'button';
     button.className = 'game-setup-faction';
     button.dataset.active = String(isActive);
     button.dataset.you = String(isYourFaction);
-    button.disabled = selectingYourFaction && !isActive;
-    button.setAttribute('aria-pressed', String(selectingYourFaction ? isYourFaction : isActive));
+    button.setAttribute('aria-pressed', String(isActive));
     button.setAttribute('aria-label', faction.name + (isYourFaction ? ', your faction' : isActive ? ', in play' : ', not in play'));
 
     const image = document.createElement('img');
@@ -668,13 +669,20 @@ function renderGameSetup() {
     button.addEventListener('click', () => {
       gameSetupWarning = '';
 
-      if (selectingYourFaction) {
-        setupDraftYourFaction = isYourFaction ? '' : key;
+      if (changingYourFaction) {
+        setupDraftYourFaction = key;
+        setupDraftFactions.add(key);
+        previousSetupYourFaction = '';
+        changingYourFaction = false;
+      } else if (isYourFaction) {
+        previousSetupYourFaction = setupDraftYourFaction;
+        setupDraftYourFaction = '';
+        changingYourFaction = true;
       } else if (isActive) {
         setupDraftFactions.delete(key);
-        if (setupDraftYourFaction === key) setupDraftYourFaction = '';
       } else if (setupDraftFactions.size < 6) {
         setupDraftFactions.add(key);
+        if (!factionConfig[setupDraftYourFaction]) setupDraftYourFaction = key;
       } else {
         gameSetupWarning = 'Six factions are already selected.';
       }
@@ -689,22 +697,21 @@ function renderGameSetup() {
     factionConfig[setupDraftYourFaction] && setupDraftFactions.has(setupDraftYourFaction)
   );
 
-  elements.gameSetupGrid.setAttribute('aria-label', selectingYourFaction ? 'Choose your faction' : 'Factions in play');
-  elements.gameSetupInstructions.textContent = selectingYourFaction
-    ? 'Confirm which of the six factions is yours.'
-    : 'Select the six factions in play, then confirm which one is yours.';
-  elements.gameSetupSummary.textContent = selectingYourFaction
-    ? hasYourFaction ? 'You are playing ' + factionConfig[setupDraftYourFaction].name : 'No faction assigned to you'
-    : setupDraftFactions.size + ' of 6 factions selected';
-  elements.gameSetupNotice.textContent = gameSetupWarning || (selectingYourFaction
-    ? hasYourFaction ? factionConfig[setupDraftYourFaction].name + ' selected' : 'Choose one of the selected factions.'
-    : setupDraftFactions.size === 6 ? 'Six factions selected. Continue to choose your own.' : 6 - setupDraftFactions.size + ' places remaining');
+  elements.gameSetupGrid.setAttribute('aria-label', changingYourFaction ? 'Choose your faction' : 'Factions in play');
+  elements.gameSetupInstructions.textContent = changingYourFaction
+    ? 'Select your faction. Selecting it also adds it to the current game.'
+    : 'Select up to six factions in play. The first faction selected is yours.';
+  elements.gameSetupSummary.textContent = changingYourFaction
+    ? 'Choose your faction - ' + setupDraftFactions.size + ' factions selected'
+    : hasYourFaction
+      ? 'You are playing ' + factionConfig[setupDraftYourFaction].name + ' - ' + setupDraftFactions.size + ' factions selected'
+      : 'No faction selected';
+  elements.gameSetupNotice.textContent = gameSetupWarning || (
+    setupDraftFactions.size === 6 ? 'Six factions selected.' : 6 - setupDraftFactions.size + ' places remaining'
+  );
   elements.gameSetupNotice.dataset.warning = String(Boolean(gameSetupWarning));
-  elements.cancelGameSetup.hidden = selectingYourFaction;
-  elements.backGameSetup.hidden = !selectingYourFaction;
-  elements.advanceGameSetup.hidden = selectingYourFaction;
-  elements.advanceGameSetup.disabled = setupDraftFactions.size !== 6;
-  elements.saveGameSetup.hidden = !selectingYourFaction;
+  elements.changeYourFaction.hidden = !hasYourFaction && !changingYourFaction;
+  elements.changeYourFaction.textContent = changingYourFaction ? 'Cancel' : 'Change your faction';
   elements.saveGameSetup.disabled = !hasYourFaction;
 }
 
@@ -712,7 +719,8 @@ function showGameSetup() {
   setupDraftFactions = new Set(factionsInPlay);
   setupDraftYourFaction = elements.faction.value;
   if (!setupDraftFactions.has(setupDraftYourFaction)) setupDraftYourFaction = '';
-  gameSetupStep = 'factions';
+  previousSetupYourFaction = '';
+  changingYourFaction = false;
   gameSetupWarning = '';
   elements.appLayout.hidden = true;
   elements.gameSetup.hidden = false;
@@ -727,16 +735,15 @@ function hideGameSetup() {
 }
 
 function commitGameSetup() {
-  if (setupDraftFactions.size !== 6) {
-    gameSetupWarning = 'Choose exactly six factions before continuing.';
-    gameSetupStep = 'factions';
+  if (setupDraftFactions.size > 6) {
+    gameSetupWarning = 'Choose no more than six factions.';
     renderGameSetup();
     return;
   }
 
   if (!factionConfig[setupDraftYourFaction] || !setupDraftFactions.has(setupDraftYourFaction)) {
     gameSetupWarning = 'Choose your faction before continuing.';
-    gameSetupStep = 'your-faction';
+    changingYourFaction = true;
     renderGameSetup();
     return;
   }
@@ -887,7 +894,6 @@ function getBattlePlanValues() {
     elements.faction.value === 'ecaz' &&
     selectedLeader &&
     selectedLeader.name !== 'No leader' &&
-    selectedLeader.name !== 'Cheap Hero' &&
     elements.weapon.value === 'none' &&
     elements.defense.value === 'none' &&
     elements.ecazKarama.checked
@@ -1234,15 +1240,16 @@ elements.resetApplication.addEventListener('keydown', (event) => {
 });
 elements.setupTrigger.addEventListener('click', showGameSetup);
 elements.cancelGameSetup.addEventListener('click', hideGameSetup);
-elements.backGameSetup.addEventListener('click', () => {
-  gameSetupStep = 'factions';
-  gameSetupWarning = '';
-  renderGameSetup();
-});
-elements.advanceGameSetup.addEventListener('click', () => {
-  if (setupDraftFactions.size !== 6) return;
-  if (!setupDraftFactions.has(setupDraftYourFaction)) setupDraftYourFaction = '';
-  gameSetupStep = 'your-faction';
+elements.changeYourFaction.addEventListener('click', () => {
+  if (changingYourFaction) {
+    setupDraftYourFaction = previousSetupYourFaction;
+    previousSetupYourFaction = '';
+    changingYourFaction = false;
+  } else {
+    previousSetupYourFaction = setupDraftYourFaction;
+    setupDraftYourFaction = '';
+    changingYourFaction = true;
+  }
   gameSetupWarning = '';
   renderGameSetup();
 });

@@ -143,21 +143,9 @@
               </select>
             </div>
 
-            <div id="ecazKaramaField" class="field" hidden>
-              <label class="check-option">
-                <input id="ecazKarama" type="checkbox" />
-                Use Ecaz Special Karama Power (requires Karama Card)
-              </label>
-              <small class="field-help">Play neither a weapon nor a defense.</small>
-            </div>
-
-            <div id="ecazOpponentLeaderField" class="field" hidden>
-              <label for="ecazOpponentLeaderStrength">Opponent leader strength</label>
-              <div class="stepper">
-                <button type="button" class="stepper-btn" data-target="ecazOpponentLeaderStrength" data-step="-1" aria-label="Reduce opponent leader strength by one">−</button>
-                <input id="ecazOpponentLeaderStrength" type="number" min="0" max="7" value="0" inputmode="numeric" />
-                <button type="button" class="stepper-btn" data-target="ecazOpponentLeaderStrength" data-step="1" aria-label="Increase opponent leader strength by one">+</button>
-              </div>
+            <div id="ecazKaramaNotice" class="battle-status battle-status--warning" role="status" hidden>
+              <strong>Special Karama Power available</strong>
+              <span>Ecaz will be able to use its Special Karama Power (requires a Karama Card).</span>
             </div>
 
             <div class="preparation-preview" aria-live="polite">
@@ -224,6 +212,23 @@
                 <small>Zoal matches the printed strength of the opposing leader; use 0 against a Cheap Hero.</small>
               </div>
 
+              <div id="ecazKaramaField" class="field" hidden>
+                <label class="check-option">
+                  <input id="ecazKarama" type="checkbox" />
+                  Use Ecaz Special Karama Power (requires Karama Card)
+                </label>
+                <small class="field-help">Play neither a weapon nor a defense.</small>
+              </div>
+
+              <div id="ecazOpponentLeaderField" class="field" hidden>
+                <label for="ecazOpponentLeaderStrength">Opponent leader strength</label>
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" data-target="ecazOpponentLeaderStrength" data-step="-1" aria-label="Reduce opponent leader strength by one">−</button>
+                  <input id="ecazOpponentLeaderStrength" type="number" min="0" max="7" value="0" inputmode="numeric" />
+                  <button type="button" class="stepper-btn" data-target="ecazOpponentLeaderStrength" data-step="1" aria-label="Increase opponent leader strength by one">+</button>
+                </div>
+              </div>
+
               <label id="leaderKilledField" class="check-option" hidden>
                 <input id="resultLeaderKilled" type="checkbox" />
                 Leader killed by the opponent’s weapon
@@ -250,15 +255,14 @@
       <section id="gameSetup" class="phase-callout game-setup-panel" hidden>
         <h2>Game setup</h2>
         <div class="panel-body game-setup-body">
-          <p id="gameSetupInstructions" class="game-setup-instructions">Select the six factions in play, then confirm which one is yours.</p>
+          <p id="gameSetupInstructions" class="game-setup-instructions">Select up to six factions in play. The first faction selected is yours.</p>
           <div id="gameSetupGrid" class="game-setup-grid" role="group" aria-label="Factions in play"></div>
           <p id="gameSetupNotice" class="game-setup-notice" role="status" aria-live="polite"></p>
+          <button id="changeYourFaction" class="game-setup-change" type="button">Change your faction</button>
           <p id="gameSetupSummary" class="game-setup-summary" aria-live="polite"></p>
           <div class="game-setup-actions">
             <button id="cancelGameSetup" class="primary-btn plan-confirm-button secondary-btn" type="button">Cancel</button>
-            <button id="backGameSetup" class="primary-btn plan-confirm-button secondary-btn" type="button" hidden>Back</button>
-            <button id="advanceGameSetup" class="primary-btn plan-confirm-button" type="button">Next</button>
-            <button id="saveGameSetup" class="primary-btn plan-confirm-button" type="button" hidden>Done</button>
+            <button id="saveGameSetup" class="primary-btn plan-confirm-button" type="button">Done</button>
           </div>
         </div>
       </section>
