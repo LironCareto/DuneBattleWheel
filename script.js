@@ -292,7 +292,8 @@ function setFactionSelectionMode(hasFaction) {
     elements.faction.removeAttribute('tabindex');
   }
 
-  elements.setupTrigger.disabled = !hasFaction;
+  // Game setup is also the entry point for choosing the first faction.
+  elements.setupTrigger.disabled = false;
   elements.confirmBtn.disabled = !hasFaction;
   elements.forces.disabled = !hasFaction;
   elements.specialForces.disabled = !hasFaction;
@@ -620,21 +621,24 @@ function renderGameSetup() {
     elements.gameSetupGrid.appendChild(button);
   });
 
+  const hasYourFaction = Boolean(factionConfig[setupDraftYourFaction]);
+
   elements.gameSetupInstructions.textContent = changingYourFaction
     ? 'Choose your faction. Selecting it also adds it to the current game.'
     : 'Select the factions taking part in this game.';
   elements.changeYourFaction.textContent = changingYourFaction ? 'Cancel' : 'Change your faction';
-  elements.gameSetupSummary.textContent = 'You are playing ' + factionConfig[setupDraftYourFaction].name + ' · ' + setupDraftFactions.size + ' factions selected';
+  elements.changeYourFaction.hidden = !hasYourFaction;
+  elements.gameSetupSummary.textContent = hasYourFaction
+    ? 'You are playing ' + factionConfig[setupDraftYourFaction].name + ' · ' + setupDraftFactions.size + ' factions selected'
+    : 'Choose your faction · ' + setupDraftFactions.size + ' factions selected';
   elements.gameSetupNotice.textContent = gameSetupWarning || (setupDraftFactions.size <= 6 ? 6 - setupDraftFactions.size + ' places remaining' : setupDraftFactions.size + ' factions selected');
   elements.gameSetupNotice.dataset.warning = String(Boolean(gameSetupWarning));
 }
 
 function showGameSetup() {
-  if (!factionConfig[elements.faction.value]) return;
-
   setupDraftFactions = new Set(factionsInPlay);
   setupDraftYourFaction = elements.faction.value;
-  changingYourFaction = false;
+  changingYourFaction = !factionConfig[setupDraftYourFaction];
   gameSetupWarning = '';
   elements.appLayout.hidden = true;
   elements.gameSetup.hidden = false;
@@ -649,6 +653,13 @@ function hideGameSetup() {
 }
 
 function commitGameSetup() {
+  if (!factionConfig[setupDraftYourFaction]) {
+    gameSetupWarning = 'Choose your faction before continuing.';
+    changingYourFaction = true;
+    renderGameSetup();
+    return;
+  }
+
   if (setupDraftFactions.size > 6) {
     gameSetupWarning = 'Choose no more than six factions before continuing.';
     renderGameSetup();
